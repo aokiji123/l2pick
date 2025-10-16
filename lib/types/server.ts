@@ -1,0 +1,30 @@
+import { Chronicle } from "./chronicle";
+import { Project } from "./project";
+
+export type Server = {
+  id: number;
+  url_slug: string;
+  announce_name: string;
+  rating_name: string;
+  meta_title: string;
+  meta_description: string;
+  website_url: string;
+  rate: string;
+  server_type_id: number;
+  launch_date: string;
+  short_description: string;
+  full_description: string;
+  logo: string;
+  votes_count: number;
+  weighted_votes: number;
+  rating_stars: number;
+  reviews_count: number;
+  status: string;
+  display_date: string;
+  project: Project;
+  chronicle: Chronicle;
+  has_vip_background: boolean;
+  has_bold_font: boolean;
+  has_vip_icon: boolean;
+  created_at: string;
+};

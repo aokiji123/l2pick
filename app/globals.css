@@ -1,0 +1,71 @@
+@import url('https://fonts.cdnfonts.com/css/geometria');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+  /* colors */
+  --color-brand-light: #edf1f1;
+  --color-brand-dark: #121419;
+  --color-brand-primary: #20232a;
+  --color-brand-primary-2: #20232b;
+  --color-brand-primary-3: #1e2128;
+  --color-brand-primary-4: #21242e;
+  --color-brand-secondary: #838a94;
+  --color-brand-secondary-2: #333945;
+  --color-brand-secondary-3: #333741;
+  --color-brand-btn: #f56539;
+  --color-brand-btn-gray: #2d323b;
+  --color-brand-btn-gray-2: #373c47;
+  --color-brand-btn-gray-3: #2f333c;
+  --color-brand-gray: #dadcdd;
+  --color-brand-gray-2: #f1f5f6;
+  --color-brand-gray-3: #f1f4f5;
+  --color-brand-slate-gray: #9ea3b1;
+  --color-brand-header-light: #1f2229;
+  --color-brand-header-dark: #0f1117;
+  --color-brand-main: #262930;
+  --color-brand-main-dark: #191c24;
+  --color-brand-main-2: #21252c;
+  --color-brand-orange: #f3967a;
+  --color-brand-green: #559946;
+  --color-brand-danger: #ee2546;
+
+  --spacing-18: 72px;
+
+  --font-exo2: "Exo 2", sans-serif; 
+
+  --breakpoint-xxs: 375px;
+}
+
+html, body {
+  font-family: 'Geometria', sans-serif;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+
+.scroll-style::-webkit-scrollbar {
+  @apply w-px
+}
+
+.scroll-style::-webkit-scrollbar-thumb {
+  @apply w-px bg-brand-btn
+}
+
+.scroll-style::-webkit-scrollbar {
+  @apply w-[3px] bg-[#e5e9ed] dark:!bg-brand-btn-gray
+}
+
+button:hover{
+  @apply opacity-90
+}
+
+button {
+  @apply cursor-pointer
+}
