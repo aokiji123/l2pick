@@ -1,10 +1,10 @@
-
+"use client";
 import { IoRocketSharp } from "react-icons/io5";
 import { MdAccessTime } from "react-icons/md";
 import ServerItemDropdown from "../server-components/ServerItemDropdown";
-import type { ServerItem } from "@/lib/mockServers";
-import { openedServers, soonServers, todayServers, tomorrowServers } from "@/lib/mockServers";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useServers } from "@/lib/queries/useServers";
+import { ServerResponse } from "@/lib/types/server";
 
 function Section({
   title,
@@ -17,7 +17,7 @@ function Section({
   subtitle?: string;
   icon?: React.ReactNode;
   vip?: boolean;
-  servers?: ServerItem[];
+  servers?: ServerResponse;
 }) {
   return (
     <div className="mb-6">
@@ -37,10 +37,10 @@ function Section({
         )}
       </div>
       <div className="flex flex-col gap-2">
-        {servers?.map((server) => (
-          <ServerItemDropdown key={server.id}
-            topserver={Boolean(server.topserver)}
-            serverColor={Boolean(server.serverColor)}
+        {servers?.data?.map((server, index) => (
+          <ServerItemDropdown
+            key={server.id}
+            topserver={index === 0}
             server={server}
           />
         ))}
@@ -50,12 +50,38 @@ function Section({
 }
 
 export default function ServersSection() {
+  const { data: soonServers } = useServers({
+    per_page: 6,
+    sort: "rating",
+    status: "coming_soon",
+  });
+
+  const { data: openedServersData } = useServers({
+    per_page: 6,
+    sort: "rating",
+    status: "opened",
+  });
+
+  const { data: todayServersData } = useServers({
+    per_page: 6,
+    sort: "rating",
+    status: "today",
+  });
+
+  const { data: tomorrowServersData } = useServers({
+    per_page: 6,
+    sort: "rating",
+    status: "tomorrow",
+  });
+
   return (
     <>
       <Tabs defaultValue="soon" className="md:hidden w-full">
         <TabsContent value="soon">
-          <Section 
-            icon={<MdAccessTime className="text-brand-primary-3 dark:text-brand-btn" />}
+          <Section
+            icon={
+              <MdAccessTime className="text-brand-primary-3 dark:text-brand-btn" />
+            }
             title="Скоро откроются"
             vip={true}
             servers={soonServers}
@@ -63,36 +89,68 @@ export default function ServersSection() {
         </TabsContent>
         <TabsContent value="opened">
           <Section
-            icon={<IoRocketSharp className="text-brand-primary-3 dark:text-brand-btn" />}
+            icon={
+              <IoRocketSharp className="text-brand-primary-3 dark:text-brand-btn" />
+            }
             title="Уже открылись"
             vip={true}
-            servers={openedServers}
+            servers={openedServersData}
           />
         </TabsContent>
-        <TabsList className='bg-white dark:bg-brand-primary-3 h-14 grid grid-cols-2 fixed z-50 bottom-0 left-0 justify-start flex-wrap gap-3 w-full'>
-          <TabsTrigger className='data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white' value="soon">Открытие скоро</TabsTrigger>
-          <TabsTrigger className='data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white' value="opened">Уже открытые</TabsTrigger>
+        <TabsList className="bg-white dark:bg-brand-primary-3 h-14 grid grid-cols-2 fixed z-50 bottom-0 left-0 justify-start flex-wrap gap-3 w-full">
+          <TabsTrigger
+            className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white"
+            value="soon"
+          >
+            Открытие скоро
+          </TabsTrigger>
+          <TabsTrigger
+            className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white"
+            value="opened"
+          >
+            Уже открытые
+          </TabsTrigger>
         </TabsList>
       </Tabs>
       <div className="grid md:hidden grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-y-5 gap-x-3.5 ">
-        <Section title="Сегодня" subtitle="(26.07.2021 - Пятница)" servers={todayServers} />
-        <Section title="Завтра" subtitle="(26.07.2021 - Пятница)" servers={tomorrowServers} />
+        <Section
+          title="Сегодня"
+          subtitle="(26.07.2021 - Пятница)"
+          servers={todayServersData}
+        />
+        <Section
+          title="Завтра"
+          subtitle="(26.07.2021 - Пятница)"
+          servers={tomorrowServersData}
+        />
       </div>
       <div className="hidden md:grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-3.5 ">
-        <Section 
-          icon={<MdAccessTime className="text-brand-primary-3 dark:text-brand-btn" />}
+        <Section
+          icon={
+            <MdAccessTime className="text-brand-primary-3 dark:text-brand-btn" />
+          }
           title="Скоро откроются"
           vip={true}
           servers={soonServers}
         />
         <Section
-          icon={<IoRocketSharp className="text-brand-primary-3 dark:text-brand-btn" />}
+          icon={
+            <IoRocketSharp className="text-brand-primary-3 dark:text-brand-btn" />
+          }
           title="Уже открылись"
           vip={true}
-          servers={openedServers}
+          servers={openedServersData}
         />
-        <Section title="Сегодня" subtitle="(26.07.2021 - Пятница)" servers={todayServers} />
-        <Section title="Завтра" subtitle="(26.07.2021 - Пятница)" servers={tomorrowServers} />
+        <Section
+          title="Сегодня"
+          subtitle="(26.07.2021 - Пятница)"
+          servers={todayServersData}
+        />
+        <Section
+          title="Завтра"
+          subtitle="(26.07.2021 - Пятница)"
+          servers={tomorrowServersData}
+        />
       </div>
     </>
   );

@@ -8,3 +8,7 @@ export type Chronicle = {
   meta_title: string;
   meta_description: string;
 };
+
+export type ChronicleResponse = {
+  data: Chronicle[];
+};

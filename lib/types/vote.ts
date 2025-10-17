@@ -1,4 +1,4 @@
-import { Server } from "./server";
+import { ServerVote } from "./server";
 
 export type Vote = {
   id: number;
@@ -6,5 +6,5 @@ export type Vote = {
   voted_at: string;
   created_at: string;
   updated_at: string;
-  server: Server;
+  server: ServerVote;
 };

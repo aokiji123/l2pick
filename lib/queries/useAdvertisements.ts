@@ -1,15 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../api";
+import { AdvertisementResponse } from "../types/advertisement";
 
-const getAdvertisementsBanner = async () => {
+const getAdvertisementsBanner = async (): Promise<AdvertisementResponse> => {
   const response = await axiosInstance.get("/advertisements/banner");
   return response.data;
 };
 
-const getAdvertisementsBackgrounds = async () => {
-  const response = await axiosInstance.get("/advertisements/backgrounds");
-  return response.data;
-};
+const getAdvertisementsBackground =
+  async (): Promise<AdvertisementResponse> => {
+    const response = await axiosInstance.get("/advertisements/backgrounds");
+    return response.data;
+  };
 
 const getAdvertisementById = async (id: string) => {
   const response = await axiosInstance.get(`/advertisements/${id}`);
@@ -24,10 +26,10 @@ export const useAdvertisementsBanner = () => {
   });
 };
 
-export const useAdvertisementsBackgrounds = () => {
+export const useAdvertisementsBackground = () => {
   return useQuery({
     queryKey: ["advertisements-backgrounds"],
-    queryFn: getAdvertisementsBackgrounds,
+    queryFn: getAdvertisementsBackground,
     staleTime: 60 * 1000,
   });
 };
