@@ -1,6 +1,6 @@
 import axiosInstance from "../api";
 import { useQuery } from "@tanstack/react-query";
-import { ServerResponse } from "../types/server";
+import { ServerResponse, Server } from "../types/server";
 
 type ServerStatus =
   | "coming_soon"
@@ -34,6 +34,16 @@ const getTop5Servers = async (): Promise<ServerResponse> => {
   return response.data;
 };
 
+const getTopServers = async (): Promise<ServerResponse> => {
+  const response = await axiosInstance.get("/servers/top");
+  return response.data;
+};
+
+const getServerBySlug = async (slug: string): Promise<Server> => {
+  const response = await axiosInstance.get(`/servers/${slug}`);
+  return response.data;
+};
+
 export const useServers = (params?: GetServersParams) => {
   return useQuery({
     queryKey: ["servers", params],
@@ -45,5 +55,20 @@ export const useTop5Servers = () => {
   return useQuery({
     queryKey: ["top5-servers"],
     queryFn: getTop5Servers,
+  });
+};
+
+export const useTopServers = () => {
+  return useQuery({
+    queryKey: ["top-servers"],
+    queryFn: getTopServers,
+  });
+};
+
+export const useServerBySlug = (slug: string) => {
+  return useQuery({
+    queryKey: ["server", slug],
+    queryFn: () => getServerBySlug(slug),
+    enabled: !!slug,
   });
 };

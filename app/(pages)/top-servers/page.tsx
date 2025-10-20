@@ -1,105 +1,80 @@
-'use client'
+"use client";
 
-import MobileFilterSidebar from '@/components/common/MobileFilterSidebar'
-import SearchSidebar from '@/components/common/SearchSidebar'
-import ServerCard from '@/components/elements/ServerCard'
-import React from 'react'
-
-// Mock data for servers
-const mockServers = [
-  {
-    id: 1,
-    title: 'LINEAGE 2 SCRYDENET',
-    description: 'Interlude Cusom PvP Server x1000 MAX LEVEL 99 max enchant 65 buff slots unlimited Augment count unlimited Battle Pass System',
-    tags: ['Interlude', 'PTS', 'GVE'],
-    rating: 4,
-    votes: 25750,
-    comments: 6570,
-    launchDate: '11.12.2025',
-    image: '/banner.jpg',
-    hasVoted: true,
-    voteTimer: '10:57:40'
-  },
-  {
-    id: 2,
-    title: 'LINEAGE 2 SCRYDENET',
-    description: 'Interlude Cusom PvP Server x1000 MAX LEVEL 99 max enchant 65 buff slots unlimited Augment count unlimited Battle Pass System',
-    tags: ['Interlude', 'PTS', 'GVE'],
-    rating: 4.5,
-    votes: 25750,
-    comments: 657,
-    launchDate: '05.12.2025',
-    image: '/banner.jpg',
-    hasVoted: false
-  },
-  {
-    id: 3,
-    title: 'LINEAGE 2 SCRYDENET',
-    description: 'Interlude Cusom PvP Server x1000 MAX LEVEL 99 max enchant 65 buff slots unlimited Augment count unlimited Battle Pass System',
-    tags: ['Interlude', 'PTS', 'GVE'],
-    rating: 2.5,
-    votes: 25750,
-    comments: 657,
-    launchDate: '17.12.2025',
-    image: '/banner.jpg',
-    hasVoted: false
-  },
-  {
-    id: 4,
-    title: 'LINEAGE 2 SCRYDENET',
-    description: 'Interlude Cusom PvP Server x1000 MAX LEVEL 99 max enchant 65 buff slots unlimited Augment count unlimited Battle Pass System',
-    tags: ['Interlude', 'PTS', 'GVE'],
-    rating: 3.5,
-    votes: 25750,
-    comments: 657,
-    launchDate: '14.12.2025',
-    image: '/banner.jpg',
-    hasVoted: false
-  },
-  {
-    id: 5,
-    title: 'LINEAGE 2 SCRYDENET',
-    description: 'Interlude Cusom PvP Server x1000 MAX LEVEL 99 max enchant 65 buff slots unlimited Augment count unlimited Battle Pass System',
-    tags: ['Interlude', 'PTS', 'GVE'],
-    rating: 5,
-    votes: 25750,
-    comments: 657,
-    launchDate: '11.05.2025',
-    image: '/banner.jpg',
-    hasVoted: false
-  }
-]
+import MobileFilterSidebar from "@/components/common/MobileFilterSidebar";
+import SearchSidebar from "@/components/common/SearchSidebar";
+import ServerCard from "@/components/elements/ServerCard";
+import { useTopServers } from "@/lib/queries/useServers";
+import React from "react";
 
 const TopServers = () => {
+  const { data: topServers, isLoading, error } = useTopServers();
+
+  if (isLoading) {
+    return (
+      <>
+        <MobileFilterSidebar />
+        <div className="flex items-stretch min-h-screen">
+          <SearchSidebar />
+          <div className="w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl lg:rounded-l-none p-3 lg:p-4">
+            <div className="space-y-4">
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-32 rounded-2xl"></div>
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-32 rounded-2xl"></div>
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-32 rounded-2xl"></div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <MobileFilterSidebar />
+        <div className="flex items-stretch min-h-screen">
+          <SearchSidebar />
+          <div className="w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl lg:rounded-l-none p-3 lg:p-4">
+            <div className="text-center text-red-500">
+              Error loading servers
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       <MobileFilterSidebar />
-      <div className='flex items-stretch min-h-screen'>
-        <SearchSidebar /> 
-        <div className='w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl lg:rounded-l-none p-3 lg:p-4'>
+      <div className="flex items-stretch min-h-screen">
+        <SearchSidebar />
+        <div className="w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl lg:rounded-l-none p-3 lg:p-4">
           {/* Server List */}
           <div className="space-y-4">
-            {mockServers.map((server) => (
+            {topServers?.data?.map((server, index) => (
               <ServerCard
                 key={server.id}
-                id={server.id}
-                title={server.title}
-                description={server.description}
-                tags={server.tags}
-                rating={server.rating}
-                votes={server.votes}
-                comments={server.comments}
-                launchDate={server.launchDate}
-                image={server.image}
-                hasVoted={server.hasVoted}
+                id={index + 1}
+                title={server.announce_name}
+                description={server.short_description}
+                tags={[
+                  server.chronicle?.name || "",
+                  server.server_type_data?.name || "",
+                ]}
+                rating={server.rating_stars}
+                votes={server.votes_count}
+                comments={server.reviews_count}
+                launchDate={server.display_date}
+                image={server.logo}
+                hasVoted={false}
+                slug={server.url_slug}
               />
             ))}
           </div>
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default TopServers
+export default TopServers;

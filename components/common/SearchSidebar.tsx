@@ -11,6 +11,7 @@ import { Url } from "next/dist/shared/lib/router/router";
 import { useRates } from "@/lib/queries/useRates";
 import { useChronicles } from "@/lib/queries/useChronicles";
 import { useServers, useTop5Servers } from "@/lib/queries/useServers";
+import { useRouter } from "next/navigation";
 
 const SearchSidebar = () => {
   return (
@@ -21,6 +22,7 @@ const SearchSidebar = () => {
 };
 
 export const FilterContent = () => {
+  const router = useRouter();
   const {
     data: advertisementsBackground,
     isLoading: advertisementsBackgroundLoading,
@@ -46,13 +48,20 @@ export const FilterContent = () => {
           <CustomSelect
             title="Все рейты"
             options={rates?.data.map((rate) => rate.name) || []}
+            filterType="rate"
+            filterData={rates?.data || []}
           />
           <CustomSelect
             title="Все хроники"
             options={chronicles?.data.map((chronicle) => chronicle.name) || []}
+            filterType="chronicle"
+            filterData={chronicles?.data || []}
           />
 
-          <MainButton className="col-span-2 tracking-[1px] !h-12 !px-0">
+          <MainButton
+            className="col-span-2 tracking-[1px] !h-12 !px-0"
+            onClick={() => router.push("/servers")}
+          >
             ПОДОБРАТЬ СЕРВЕР
           </MainButton>
         </div>
