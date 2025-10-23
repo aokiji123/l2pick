@@ -11,7 +11,7 @@ import { Url } from "next/dist/shared/lib/router/router";
 import { useRates } from "@/lib/queries/useRates";
 import { useChronicles } from "@/lib/queries/useChronicles";
 import { useServers, useTop5Servers } from "@/lib/queries/useServers";
-import { useRouter } from "next/navigation";
+import { useFilter } from "@/contexts/FilterContext";
 
 const SearchSidebar = () => {
   return (
@@ -22,7 +22,7 @@ const SearchSidebar = () => {
 };
 
 export const FilterContent = () => {
-  const router = useRouter();
+  const { filters, pendingFilters, applyFilters, clearFilters } = useFilter();
   const {
     data: advertisementsBackground,
     isLoading: advertisementsBackgroundLoading,
@@ -31,16 +31,22 @@ export const FilterContent = () => {
   const { data: rates } = useRates();
   const { data: chronicles } = useChronicles();
   const { data: top5Servers } = useTop5Servers();
-  const { data: servers } = useServers({ per_page: 6, sort: "rating" });
+  const { data: servers } = useServers({
+    per_page: 6,
+    sort: "rating",
+  });
 
   return (
     <>
       <div className="px-5">
         <SearchInput />
         <div className="grid grid-cols-2 gap-3.5 py-5 border-b border-brand-primary">
-          <button className="col-span-2 cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border border-brand-btn-gray-3 rounded-xl transition-all duration-200 hover:border-[#ee8b21]">
+          <Link
+            href="/top-servers"
+            className="col-span-2 cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border border-brand-btn-gray-3 rounded-xl transition-all duration-200 hover:border-[#ee8b21]"
+          >
             Топ сервера Lineage II
-          </button>
+          </Link>
           <FilterButtons servers={servers?.data || []} colSpan="col-span-1" />
         </div>
 
@@ -58,9 +64,21 @@ export const FilterContent = () => {
             filterData={chronicles?.data || []}
           />
 
+          {(filters.selectedRate ||
+            filters.selectedChronicle ||
+            pendingFilters.pendingRate ||
+            pendingFilters.pendingChronicle) && (
+            <button
+              onClick={clearFilters}
+              className="col-span-2 h-10 bg-brand-gray-2 dark:bg-brand-btn-gray-3 text-white text-sm border border-brand-gray-2 dark:border-brand-btn-gray-3 rounded-xl transition-all duration-200 hover:border-brand-orange hover:bg-brand-orange"
+            >
+              Сбросить фильтры
+            </button>
+          )}
+
           <MainButton
             className="col-span-2 tracking-[1px] !h-12 !px-0"
-            onClick={() => router.push("/servers")}
+            onClick={applyFilters}
           >
             ПОДОБРАТЬ СЕРВЕР
           </MainButton>

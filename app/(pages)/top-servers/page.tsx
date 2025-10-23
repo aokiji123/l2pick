@@ -3,11 +3,11 @@
 import MobileFilterSidebar from "@/components/common/MobileFilterSidebar";
 import SearchSidebar from "@/components/common/SearchSidebar";
 import ServerCard from "@/components/elements/ServerCard";
-import { useTopServers } from "@/lib/queries/useServers";
+import { useTop5Servers } from "@/lib/queries/useServers";
 import React from "react";
 
 const TopServers = () => {
-  const { data: topServers, isLoading, error } = useTopServers();
+  const { data: topServers, isLoading, error } = useTop5Servers();
 
   if (isLoading) {
     return (

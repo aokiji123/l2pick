@@ -2,7 +2,8 @@
 import { Chronicle } from "@/lib/types/chronicle";
 import { Rate } from "@/lib/types/rate";
 import { Server } from "@/lib/types/server";
-import React, { useState } from "react";
+import React from "react";
+import { useFilter } from "@/contexts/FilterContext";
 import { useRouter } from "next/navigation";
 
 interface props {
@@ -13,29 +14,23 @@ interface props {
 }
 
 const FilterButtons = ({ rates, chronicles, servers, colSpan }: props) => {
-  const [activeFilter, setActiveFilter] = useState<string>("");
   const router = useRouter();
+  const { filters, pendingFilters, setPendingRate, setPendingChronicle } =
+    useFilter();
 
   const handleFilterClick = (
     filterId: string,
     filterType: "rate" | "chronicle" | "server",
-    filterValue: string
+    filterValue: string,
+    serverSlug?: string
   ) => {
-    setActiveFilter(filterId);
-
-    // Build query parameters based on filter type
-    const params = new URLSearchParams();
-
     if (filterType === "rate") {
-      params.set("rate", filterId);
+      setPendingRate(filterId);
     } else if (filterType === "chronicle") {
-      params.set("chronicle_id", filterId);
-    } else if (filterType === "server") {
-      params.set("search", filterValue);
+      setPendingChronicle(parseInt(filterId));
+    } else if (filterType === "server" && serverSlug) {
+      router.push(`/server-info?slug=${serverSlug}`);
     }
-
-    // Navigate to servers page with filter parameters
-    router.push(`/servers?${params.toString()}`);
   };
 
   return (
@@ -44,10 +39,11 @@ const FilterButtons = ({ rates, chronicles, servers, colSpan }: props) => {
         <button
           key={rate.id}
           onClick={() =>
-            handleFilterClick(rate.id.toString(), "rate", rate.name)
+            handleFilterClick(rate.name.replace("x", ""), "rate", rate.name)
           }
           className={`${colSpan} cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border  rounded-xl transition-all duration-200 ${
-            activeFilter === rate.name
+            filters.selectedRate === rate.name.replace("x", "") ||
+            pendingFilters.pendingRate === rate.name.replace("x", "")
               ? "border-[#ee8b21]"
               : "border-brand-btn-gray-3"
           }`}
@@ -66,7 +62,8 @@ const FilterButtons = ({ rates, chronicles, servers, colSpan }: props) => {
             )
           }
           className={`${colSpan} cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border  rounded-xl transition-all duration-200 ${
-            activeFilter === chronicle.name
+            filters.selectedChronicle === chronicle.id ||
+            pendingFilters.pendingChronicle === chronicle.id
               ? "border-[#ee8b21]"
               : "border-brand-btn-gray-3"
           }`}
@@ -81,14 +78,11 @@ const FilterButtons = ({ rates, chronicles, servers, colSpan }: props) => {
             handleFilterClick(
               server.id.toString(),
               "server",
-              server.announce_name
+              server.announce_name,
+              server.url_slug
             )
           }
-          className={`${colSpan} cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border  rounded-xl transition-all duration-200 ${
-            activeFilter === server.announce_name
-              ? "border-[#ee8b21]"
-              : "border-brand-btn-gray-3"
-          }`}
+          className={`${colSpan} cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border  rounded-xl transition-all duration-200 border-brand-btn-gray-3`}
         >
           {server.announce_name}
         </button>

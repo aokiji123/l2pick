@@ -3,7 +3,7 @@ import axiosInstance from "../api";
 import { AdvertisementResponse } from "../types/advertisement";
 
 const getAdvertisementsBanner = async (): Promise<AdvertisementResponse> => {
-  const response = await axiosInstance.get("/advertisements/banner");
+  const response = await axiosInstance.get("/advertisements/banners");
   return response.data;
 };
 

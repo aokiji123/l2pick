@@ -5,6 +5,7 @@ import ServerItemDropdown from "../server-components/ServerItemDropdown";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useServers } from "@/lib/queries/useServers";
 import { ServerResponse } from "@/lib/types/server";
+import { useFilter } from "@/contexts/FilterContext";
 
 function Section({
   title,
@@ -50,28 +51,46 @@ function Section({
 }
 
 export default function ServersSection() {
+  const { filters } = useFilter();
+
   const { data: soonServers } = useServers({
     per_page: 6,
     sort: "rating",
     status: "coming_soon",
+    ...(filters.selectedRate && { rate: filters.selectedRate }),
+    ...(filters.selectedChronicle && {
+      chronicle_id: filters.selectedChronicle,
+    }),
   });
 
   const { data: openedServersData } = useServers({
     per_page: 6,
     sort: "rating",
     status: "opened",
+    ...(filters.selectedRate && { rate: filters.selectedRate }),
+    ...(filters.selectedChronicle && {
+      chronicle_id: filters.selectedChronicle,
+    }),
   });
 
   const { data: todayServersData } = useServers({
     per_page: 6,
     sort: "rating",
     status: "today",
+    ...(filters.selectedRate && { rate: filters.selectedRate }),
+    ...(filters.selectedChronicle && {
+      chronicle_id: filters.selectedChronicle,
+    }),
   });
 
   const { data: tomorrowServersData } = useServers({
     per_page: 6,
     sort: "rating",
     status: "tomorrow",
+    ...(filters.selectedRate && { rate: filters.selectedRate }),
+    ...(filters.selectedChronicle && {
+      chronicle_id: filters.selectedChronicle,
+    }),
   });
 
   return (

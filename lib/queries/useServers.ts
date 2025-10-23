@@ -13,7 +13,7 @@ type SortOrder = "asc" | "desc";
 
 type GetServersParams = {
   chronicle_id?: number;
-  rate?: number;
+  rate?: string;
   status?: ServerStatus;
   search?: string;
   my_servers?: 0 | 1;
@@ -34,13 +34,13 @@ const getTop5Servers = async (): Promise<ServerResponse> => {
   return response.data;
 };
 
-const getTopServers = async (): Promise<ServerResponse> => {
-  const response = await axiosInstance.get("/servers/top");
+const getServerBySlug = async (slug: string): Promise<Server> => {
+  const response = await axiosInstance.get(`/servers/${slug}`);
   return response.data;
 };
 
-const getServerBySlug = async (slug: string): Promise<Server> => {
-  const response = await axiosInstance.get(`/servers/${slug}`);
+const getGroupedServers = async (): Promise<ServerResponse> => {
+  const response = await axiosInstance.get("/servers/grouped");
   return response.data;
 };
 
@@ -58,17 +58,17 @@ export const useTop5Servers = () => {
   });
 };
 
-export const useTopServers = () => {
-  return useQuery({
-    queryKey: ["top-servers"],
-    queryFn: getTopServers,
-  });
-};
-
 export const useServerBySlug = (slug: string) => {
   return useQuery({
     queryKey: ["server", slug],
     queryFn: () => getServerBySlug(slug),
     enabled: !!slug,
+  });
+};
+
+export const useGroupedServers = () => {
+  return useQuery({
+    queryKey: ["grouped-servers"],
+    queryFn: getGroupedServers,
   });
 };
