@@ -61,7 +61,7 @@ const SearchInput = () => {
     setSelectedServer(server);
     setSearchValue(server.announce_name);
     setShowDropdown(false);
-    router.push(`/server-info?slug=${encodeURIComponent(server.url_slug)}`);
+    router.push(`/project-info?slug=${encodeURIComponent(server.url_slug)}`);
   };
 
   const handleClickOutside = (event: MouseEvent) => {

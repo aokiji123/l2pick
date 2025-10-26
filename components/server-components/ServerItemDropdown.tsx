@@ -161,7 +161,7 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
               )}
               <button
                 onClick={() =>
-                  route.push(`/server-info?slug=${server.url_slug}`)
+                  route.push(`/project-info?slug=${server.project.slug}`)
                 }
                 className="px-3 h-8 bg-[#464b55] text-white text-xs font-bold rounded-md hover:bg-opacity-90 transition-colors"
               >

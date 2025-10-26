@@ -3,7 +3,7 @@ import { IoRocketSharp } from "react-icons/io5";
 import { MdAccessTime } from "react-icons/md";
 import ServerItemDropdown from "../server-components/ServerItemDropdown";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useServers } from "@/lib/queries/useServers";
+import { useGroupedServers } from "@/lib/queries/useServers";
 import { ServerResponse } from "@/lib/types/server";
 import { useFilter } from "@/contexts/FilterContext";
 
@@ -53,45 +53,25 @@ function Section({
 export default function ServersSection() {
   const { filters } = useFilter();
 
-  const { data: soonServers } = useServers({
-    per_page: 6,
-    sort: "rating",
-    status: "coming_soon",
+  const { data: groupedData } = useGroupedServers({
     ...(filters.selectedRate && { rate: filters.selectedRate }),
     ...(filters.selectedChronicle && {
       chronicle_id: filters.selectedChronicle,
     }),
   });
 
-  const { data: openedServersData } = useServers({
-    per_page: 6,
-    sort: "rating",
-    status: "opened",
-    ...(filters.selectedRate && { rate: filters.selectedRate }),
-    ...(filters.selectedChronicle && {
-      chronicle_id: filters.selectedChronicle,
-    }),
+  const convertToServerResponse = (
+    servers: any[] | undefined
+  ): ServerResponse => ({
+    data: servers || [],
   });
 
-  const { data: todayServersData } = useServers({
-    per_page: 6,
-    sort: "rating",
-    status: "today",
-    ...(filters.selectedRate && { rate: filters.selectedRate }),
-    ...(filters.selectedChronicle && {
-      chronicle_id: filters.selectedChronicle,
-    }),
-  });
-
-  const { data: tomorrowServersData } = useServers({
-    per_page: 6,
-    sort: "rating",
-    status: "tomorrow",
-    ...(filters.selectedRate && { rate: filters.selectedRate }),
-    ...(filters.selectedChronicle && {
-      chronicle_id: filters.selectedChronicle,
-    }),
-  });
+  const soonServers = convertToServerResponse(groupedData?.data?.coming_soon);
+  const openedServersData = convertToServerResponse(groupedData?.data?.opened);
+  const todayServersData = convertToServerResponse(groupedData?.data?.today);
+  const tomorrowServersData = convertToServerResponse(
+    groupedData?.data?.tomorrow
+  );
 
   return (
     <>

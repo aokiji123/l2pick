@@ -155,7 +155,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-2">
           <Link
-            href={`/server-info?slug=${slug || ""}`}
+            href={`/project-info?slug=${slug || ""}`}
             className="flex-1 w-full min-h-10 flex items-center justify-center text-xs font-extrabold hover:opacity-90 py-2 text-brand-btn bg-white dark:bg-[#2b2e3a] border border-[#e6e9ec] dark:border-[#2b2e3a] rounded-lg"
           >
             ПЕРЕЙТИ НА САЙТ ›
@@ -206,7 +206,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
               )}
             </div>
             <Link
-              href={`/server-info?slug=${slug || ""}`}
+              href={`/project-info?slug=${slug || ""}`}
               className="flex items-center whitespace-nowrap text-xs font-extrabold hover:opacity-90 px-3 text-brand-btn"
             >
               ПЕРЕЙТИ НА САЙТ ›

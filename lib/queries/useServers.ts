@@ -1,6 +1,13 @@
 import axiosInstance from "../api";
-import { useQuery } from "@tanstack/react-query";
-import { ServerResponse, Server } from "../types/server";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  ServerResponse,
+  Server,
+  GroupedServersResponse,
+  CreateServerRequest,
+  ServerType,
+  ServerTypesResponse,
+} from "../types/server";
 
 type ServerStatus =
   | "coming_soon"
@@ -39,8 +46,20 @@ const getServerBySlug = async (slug: string): Promise<Server> => {
   return response.data;
 };
 
-const getGroupedServers = async (): Promise<ServerResponse> => {
-  const response = await axiosInstance.get("/servers/grouped");
+const getGroupedServers = async (
+  params?: GetServersParams
+): Promise<GroupedServersResponse> => {
+  const response = await axiosInstance.get("/servers/grouped", { params });
+  return response.data;
+};
+
+const createServer = async (data: CreateServerRequest): Promise<Server> => {
+  const response = await axiosInstance.post("/servers", data);
+  return response.data;
+};
+
+const getServerTypes = async (): Promise<ServerTypesResponse> => {
+  const response = await axiosInstance.get("/server-types");
   return response.data;
 };
 
@@ -66,9 +85,22 @@ export const useServerBySlug = (slug: string) => {
   });
 };
 
-export const useGroupedServers = () => {
+export const useGroupedServers = (params?: GetServersParams) => {
   return useQuery({
-    queryKey: ["grouped-servers"],
-    queryFn: getGroupedServers,
+    queryKey: ["grouped-servers", params],
+    queryFn: () => getGroupedServers(params),
+  });
+};
+
+export const useCreateServer = () => {
+  return useMutation({
+    mutationFn: createServer,
+  });
+};
+
+export const useGetServerTypes = () => {
+  return useQuery({
+    queryKey: ["server-types"],
+    queryFn: getServerTypes,
   });
 };

@@ -7,10 +7,23 @@ const getUserVotes = async (): Promise<Vote[]> => {
   return response.data;
 };
 
+const getVotesHistory = async (): Promise<Vote[]> => {
+  const response = await axiosInstance.get("/votes/history");
+  return response.data;
+};
+
 export const useGetUserVotes = () => {
   return useQuery({
     queryKey: ["votes", "user"],
     queryFn: getUserVotes,
+    staleTime: 60 * 1000,
+  });
+};
+
+export const useGetVotesHistory = () => {
+  return useQuery({
+    queryKey: ["votes", "history"],
+    queryFn: getVotesHistory,
     staleTime: 60 * 1000,
   });
 };

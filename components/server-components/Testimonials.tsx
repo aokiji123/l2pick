@@ -1,64 +1,29 @@
+"use client";
 import React, { useState } from "react";
 import Titlemini from "./TitleMini";
 import { renderStars } from "../elements/RenderStars";
 import { MdOutlineAccessTime } from "react-icons/md";
+import { ProjectDetail, ProjectReview } from "@/lib/types/project";
+import {
+  useReviewsForProject,
+  useCreateReview,
+} from "@/lib/queries/useReviews";
+import { useQueryClient } from "@tanstack/react-query";
 
-// Mock data for testimonials
-const mockTestimonials = [
-  {
-    id: 1,
-    name: "James Corsa",
-    rating: 3.5,
-    text: "С учётом сложивш 1964 международной обстановки, высококачественный прототип будущего проекта, а также свежий взгляд на привычные вещи — безусловно открывает новые горизонты системы обучения кадров.",
-    date: "25.07.2015",
-  },
-  {
-    id: 2,
-    name: "Maria Petrova",
-    rating: 4.2,
-    text: "Отличный сервер с высоким уровнем стабильности. Администрация всегда на связи и быстро решает возникающие проблемы. Рекомендую всем игрокам, которые ценят качество.",
-    date: "18.11.2023",
-  },
-  {
-    id: 3,
-    name: "Alex Thompson",
-    rating: 5.0,
-    text: "Лучший сервер, на котором я когда-либо играл! Отличная экономика, сбалансированный геймплей и дружелюбное сообщество. Огромное спасибо команде разработчиков.",
-    date: "03.09.2023",
-  },
-  {
-    id: 4,
-    name: "Elena Smirnova",
-    rating: 3.8,
-    text: "Хороший сервер, но есть небольшие проблемы с лагами в вечернее время. В целом довольна игровым процессом и системой наград.",
-    date: "12.08.2023",
-  },
-  {
-    id: 5,
-    name: "Dmitry Volkov",
-    rating: 4.7,
-    text: "Потрясающий сервер! Отличная производительность, интересные события и активная администрация. Играть здесь одно удовольствие.",
-    date: "29.06.2023",
-  },
-  {
-    id: 6,
-    name: "Anna Kozlova",
-    rating: 4.0,
-    text: "Сервер оправдал все мои ожидания. Стабильная работа, интересные квесты и хорошая система прокачки персонажа.",
-    date: "15.05.2023",
-  },
-];
+type TestimonialsProps = {
+  project: ProjectDetail;
+};
 
-const TestimonialCard = ({
-  testimonial,
-}: {
-  testimonial: (typeof mockTestimonials)[0];
-}) => {
+const TestimonialCard = ({ testimonial }: { testimonial: ProjectReview }) => {
+  const formattedDate = new Date(testimonial.created_at).toLocaleDateString(
+    "ru-RU"
+  );
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-xl">
       <div className="flex justify-between items-start mb-3">
         <h4 className="font-extrabold text-brand-primary-3 dark:text-white text-sm">
-          {testimonial.name}
+          {testimonial.user.name}
         </h4>
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-[#a0a6b5] dark:text-gray-400">
@@ -76,20 +41,24 @@ const TestimonialCard = ({
         </div>
       </div>
       <p className="text-sm text-brand-primary-3 dark:text-white font-medium mb-3 leading-4">
-        {testimonial.text}
+        {testimonial.comment}
       </p>
       <div className="flex items-center gap-0.5 text-xs text-[#a0a6b5] font-medium dark:text-gray-400">
         <MdOutlineAccessTime />
-        {testimonial.date}
+        {formattedDate}
       </div>
     </div>
   );
 };
 
-const ReviewForm = () => {
+const ReviewForm = ({ projectId }: { projectId: number }) => {
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const queryClient = useQueryClient();
+  const createReviewMutation = useCreateReview();
 
   const maxCharacters = 900;
   const currentCharacters = reviewText.length;
@@ -102,7 +71,7 @@ const ReviewForm = () => {
     setHoveredRating(starRating);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (rating === 0) {
       alert("Пожалуйста, поставьте оценку серверу");
       return;
@@ -111,10 +80,28 @@ const ReviewForm = () => {
       alert("Пожалуйста, напишите отзыв (минимум 10 символов)");
       return;
     }
-    // Reset form
-    setRating(0);
-    setReviewText("");
-    alert("Спасибо за ваш отзыв!");
+
+    setIsSubmitting(true);
+    try {
+      await createReviewMutation.mutateAsync({
+        projectId,
+        rating,
+        comment: reviewText.trim(),
+      });
+      // Reset form
+      setRating(0);
+      setReviewText("");
+      // Invalidate and refetch reviews
+      await queryClient.invalidateQueries({ queryKey: ["reviews", projectId] });
+      alert(
+        "Спасибо за ваш отзыв! Ваш отзыв будет опубликован после модерации."
+      );
+    } catch (error) {
+      console.error("Error creating review:", error);
+      alert("Произошла ошибка при отправке отзыва. Попробуйте снова.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -170,33 +157,53 @@ const ReviewForm = () => {
         </div>
         <button
           onClick={handleSubmit}
-          className="bg-brand-btn hover:bg-brand-btn/90 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 uppercase text-sm"
+          disabled={isSubmitting}
+          className="bg-brand-btn hover:bg-brand-btn/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 uppercase text-sm"
         >
-          ОТПРАВИТЬ ОТЗЫВ
+          {isSubmitting ? "Отправка..." : "ОТПРАВИТЬ ОТЗЫВ"}
         </button>
       </div>
     </div>
   );
 };
 
-const Testimonials = () => {
+const Testimonials = ({ project }: TestimonialsProps) => {
+  // Fetch reviews for the project
+  const { data: reviewsData } = useReviewsForProject(project.id);
+
+  // Use fetched reviews if available, otherwise fall back to project.reviews
+  const testimonials: ProjectReview[] = (reviewsData?.data ||
+    project.reviews ||
+    []) as ProjectReview[];
+  const filteredTestimonials = testimonials.filter(
+    (review) => review.status === "approved"
+  );
+
+  const reviewsCount = filteredTestimonials.length;
+
   return (
     <div className="grid items-stretch lg:grid-cols-2">
       <div className="order-2 lg:order-1 h-full border-t lg:border-t-0 lg:border-r border-brand-gray dark:border-[#1f222c] py-6 pr-3">
         <h3
           className={`text-brand-primary-3 dark:text-white font-extrabold leading-4 mb-4 pl-3 lg:pl-7`}
         >
-          Всего <span className="text-brand-btn">590</span> отзывов
+          Всего <span className="text-brand-btn">{reviewsCount}</span> отзывов
         </h3>
         <div className="flex flex-col gap-3 scroll-style max-h-[442px] overflow-y-auto pr-3 pl-3 lg:pl-7 pb-4">
-          {mockTestimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-          ))}
+          {filteredTestimonials.length > 0 ? (
+            filteredTestimonials.map((testimonial: ProjectReview) => (
+              <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+            ))
+          ) : (
+            <div className="text-center text-brand-primary-3 dark:text-white py-8">
+              Пока нет отзывов
+            </div>
+          )}
         </div>
       </div>
       <div className="order-1 py-6 px-3 lg:px-7">
         <Titlemini title="Оставьте свой отзыв" />
-        <ReviewForm />
+        <ReviewForm projectId={project.id} />
       </div>
     </div>
   );

@@ -37,6 +37,16 @@ export type ServerResponse = {
   links?: ServerLinks;
 };
 
+export type GroupedServersResponse = {
+  data: {
+    coming_soon: Server[];
+    tomorrow: Server[];
+    today: Server[];
+    yesterday: Server[];
+    opened: Server[];
+  };
+};
+
 export type Server = {
   id: number;
   url_slug: string;
@@ -47,7 +57,7 @@ export type Server = {
   website_url: string;
   rate: string;
   server_type_id: number;
-  server_type_data: ServerTypeData;
+  server_type_data: ServerType;
   launch_date: string;
   short_description: string;
   full_description: string;
@@ -81,7 +91,7 @@ export type Server = {
   has_vip_icon: boolean;
 };
 
-type ServerTypeData = {
+export type ServerType = {
   id: number;
   name: string;
   slug: string;
@@ -91,6 +101,10 @@ type ServerTypeData = {
   meta_title: string;
   meta_description: string;
   servers_count: number;
+};
+
+export type ServerTypesResponse = {
+  data: ServerType[];
 };
 
 type ServerMeta = {
@@ -121,4 +135,18 @@ type PremiumFeature = {
 type ServerIcon = {
   icon: string;
   title: string;
+};
+
+export type CreateServerRequest = {
+  announce_name: string;
+  rating_name: string;
+  website_url: string;
+  rate: number | string;
+  server_type_id: number;
+  launch_date: string;
+  short_description: string;
+  full_description: string;
+  project_id: number;
+  chronicle_id: number;
+  logo: string;
 };

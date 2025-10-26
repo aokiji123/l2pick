@@ -67,7 +67,7 @@ const TopServers = () => {
                 launchDate={server.display_date}
                 image={server.logo}
                 hasVoted={false}
-                slug={server.url_slug}
+                slug={server.project?.slug}
               />
             ))}
           </div>

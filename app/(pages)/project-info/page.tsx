@@ -18,14 +18,15 @@ import GeneralInfo from "@/components/server-components/GeneralInfo";
 import Testimonials from "@/components/server-components/Testimonials";
 import { ChartAreaGradient } from "@/components/elements/ChartArea";
 import CustomDiaolog from "@/components/server-components/CustomDiaolog";
-import { useServerBySlug } from "@/lib/queries/useServers";
+import { useProjectBySlug } from "@/lib/queries/useProjects";
+import { ProjectDetail } from "@/lib/types/project";
 
-const ServerInfo = () => {
+const ProjectInfo = () => {
   const [isVoted, setIsVoted] = useState(false);
   const searchParams = useSearchParams();
   const slug = searchParams.get("slug") || "";
 
-  const { data: server, isLoading, error } = useServerBySlug(slug);
+  const { data: project, isLoading, error } = useProjectBySlug(slug);
 
   const handleVote = () => {
     if (!isVoted) {
@@ -45,12 +46,28 @@ const ServerInfo = () => {
     );
   }
 
-  if (error || !server) {
+  if (error || !project) {
     return (
       <div className="w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl p-3 lg:p-4 mb-4">
         <div className="flex justify-center items-center h-64">
           <div className="text-brand-primary-3 dark:text-white">
-            Сервер не найден
+            Проект не найден
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Get the first server from the project
+  const server = project.servers?.[0];
+
+  // If no server is found
+  if (!server) {
+    return (
+      <div className="w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl p-3 lg:p-4 mb-4">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-brand-primary-3 dark:text-white">
+            Серверы не найдены
           </div>
         </div>
       </div>
@@ -76,13 +93,13 @@ const ServerInfo = () => {
                 className="font-medium text-xs"
                 href="/top-servers"
               >
-                {server.chronicle?.name || "Серверы"}
+                {project.name || "Проекты"}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage className="font-extrabold text-xs">
-                {server.announce_name}
+                {project.name}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -94,41 +111,45 @@ const ServerInfo = () => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="md:text-3xl font-extrabold leading-4 text-brand-primary-3 dark:text-white">
-                  {server.announce_name}
+                  {project.name}
                 </h3>
-                <CustomBadge launchDate={server.launch_date} />
+                {server && <CustomBadge launchDate={server.launch_date} />}
               </div>
 
               <p className="text-sm text-[#4f5961] leading-4 dark:text-[#969ca9] mb-5 line-clamp-2">
-                {server.short_description || server.full_description}
+                {server?.short_description || server?.full_description || ""}
               </p>
               {/* tags */}
               <div className="flex flex-wrap gap-2 mb-5">
-                {server.chronicle && (
+                {server?.chronicle && (
                   <span className="px-2 py-1 rounded-md text-xs leading-4 font-bold bg-brand-btn text-white">
                     {server.chronicle.name}
                   </span>
                 )}
-                {server.server_type_data && (
+                {server && (
                   <span className="px-2 py-1 rounded-md text-xs leading-4 font-bold bg-brand-btn-gray-3 text-white">
-                    {server.server_type_data.name}
+                    Сервер
                   </span>
                 )}
-                <span
-                  className={`px-2 py-1 rounded-md text-xs leading-4 font-bold dark:text-white bg-white dark:bg-brand-dark border border-[#e6e9ec] dark:border-[#2c303c]`}
-                >
-                  x{server.rate}
-                </span>
+                {server && (
+                  <span
+                    className={`px-2 py-1 rounded-md text-xs leading-4 font-bold dark:text-white bg-white dark:bg-brand-dark border border-[#e6e9ec] dark:border-[#2c303c]`}
+                  >
+                    x{server.rate}
+                  </span>
+                )}
               </div>
               {/* rat and but */}
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-2 sm:items-center justify-between w-full mb-8">
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1">
-                    {renderStars({ rating: server.rating_stars || 0 })}
+                    {renderStars({ rating: server?.rating_stars || 0 })}
                   </div>
                   <span className="text-xs font-bold text-brand-primary dark:text-[#84889a]">
                     Голосов:{" "}
-                    <span className="text-brand-btn">{server.votes_count}</span>
+                    <span className="text-brand-btn">
+                      {server?.votes_count || project.total_votes}
+                    </span>
                   </span>
                 </div>
                 <div className="">
@@ -184,10 +205,10 @@ const ServerInfo = () => {
             </TabsList>
           </div>
           <TabsContent value="general">
-            <GeneralInfo server={server} />
+            <GeneralInfo project={project} />
           </TabsContent>
           <TabsContent value="reviews">
-            <Testimonials />
+            <Testimonials project={project} />
           </TabsContent>
           <TabsContent value="history">
             <ChartAreaGradient />
@@ -197,4 +218,4 @@ const ServerInfo = () => {
     </>
   );
 };
-export default ServerInfo;
+export default ProjectInfo;
