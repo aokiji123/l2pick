@@ -55,6 +55,7 @@ const TopServers = () => {
               <ServerCard
                 key={server.id}
                 id={index + 1}
+                serverId={server.id}
                 title={server.announce_name}
                 description={server.short_description}
                 tags={[

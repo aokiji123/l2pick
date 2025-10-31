@@ -8,9 +8,13 @@ import Link from "next/link";
 import { renderStars } from "./RenderStars";
 import CustomBadge from "./CustomBadge";
 import CustomDiaolog from "../server-components/CustomDiaolog";
+import { useRouter } from "next/navigation";
+import { useMakeComplaint } from "@/lib/queries/useComplaints";
+import { useAuthStore } from "@/contexts/AuthStore";
 
 interface ServerCardProps {
-  id: number;
+  id: number; // Ranking position for display
+  serverId: number; // Actual server ID for API calls
   title: string;
   description: string;
   tags: string[];
@@ -26,6 +30,7 @@ interface ServerCardProps {
 
 const ServerCard: React.FC<ServerCardProps> = ({
   id,
+  serverId,
   title,
   description,
   tags,
@@ -38,6 +43,10 @@ const ServerCard: React.FC<ServerCardProps> = ({
   slug,
 }) => {
   const [isVoted, setIsVoted] = useState(hasVoted);
+  const [isFlagged, setIsFlagged] = useState(false);
+  const router = useRouter();
+  const { isAuthenticated } = useAuthStore();
+  const complaintMutation = useMakeComplaint();
 
   const handleVote = () => {
     if (!isVoted) {
@@ -45,14 +54,29 @@ const ServerCard: React.FC<ServerCardProps> = ({
     }
   };
 
+  const handleComplaint = async () => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    try {
+      await complaintMutation.mutateAsync({
+        serverId: serverId.toString(),
+      });
+      setIsFlagged(true);
+    } catch (error) {
+      console.error("Complaint error:", error);
+    }
+  };
+
   const rankClass =
     id === 1
       ? "bg-[linear-gradient(0deg,#f5a339_0%,#f56539_100%)] relative before:absolute before:size-full before:bg-brand-btn before:top-0 before:left-0 before:blur-md before:opacity-60 before:-z-10"
       : id === 2
-      ? "bg-[linear-gradient(0deg,#f5a339_0%,#f56539_100%)]"
-      : id === 3
-      ? "bg-[#f57239]"
-      : "bg-[#414753]";
+        ? "bg-[linear-gradient(0deg,#f5a339_0%,#f56539_100%)]"
+        : id === 3
+          ? "bg-[#f57239]"
+          : "bg-[#414753]";
 
   return (
     <div className="relative bg-brand-gray-2 dark:bg-brand-primary-4 rounded-2xl border border-[#e6e9ec] dark:border-brand-primary-4 p-3">
@@ -125,12 +149,6 @@ const ServerCard: React.FC<ServerCardProps> = ({
               <span className="text-brand-btn">{votes.toLocaleString()}</span>
             </span>
           </div>
-          <div className="flex items-center gap-1">
-            <CommentIcon />
-            <span className="text-xs text-brand-btn font-extrabold">
-              {comments.toLocaleString()}
-            </span>
-          </div>
         </div>
 
         {/* Vote Button */}
@@ -161,10 +179,23 @@ const ServerCard: React.FC<ServerCardProps> = ({
             ПЕРЕЙТИ НА САЙТ ›
           </Link>
           <div className="flex-1 flex items-center gap-2 w-full">
-            <button className="size-10 cursor-pointer flex items-center justify-center rounded-lg bg-white dark:bg-transparent border border-brand-btn">
-              <FlagIcon />
+            <button
+              onClick={handleComplaint}
+              disabled={isFlagged || complaintMutation.isPending}
+              className={`size-10 cursor-pointer flex items-center justify-center rounded-lg bg-white dark:bg-transparent border ${
+                isFlagged ? "border-brand-green" : "border-brand-btn"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              {isFlagged ? (
+                <FaCheck className="text-brand-green" />
+              ) : (
+                <FlagIcon />
+              )}
             </button>
-            <button className="flex-1 h-10 cursor-pointer bg-white dark:bg-[#2b2e3a] border border-[#e6e9ec] dark:border-[#2b2e3a] text-xs font-extrabold leading-4 text-brand-primary dark:text-white px-3 rounded-lg">
+            <button
+              onClick={() => router.push(`/project-info?slug=${slug || ""}`)}
+              className="flex-1 h-10 cursor-pointer bg-white dark:bg-[#2b2e3a] border border-[#e6e9ec] dark:border-[#2b2e3a] text-xs font-extrabold leading-4 text-brand-primary dark:text-white px-3 rounded-lg"
+            >
               Подробнее
             </button>
           </div>
@@ -213,8 +244,14 @@ const ServerCard: React.FC<ServerCardProps> = ({
             </Link>
           </div>
         </div>
-        <button className="size-10 cursor-pointer flex items-center justify-center rounded-lg bg-white dark:bg-transparent border border-brand-btn">
-          <FlagIcon />
+        <button
+          onClick={handleComplaint}
+          disabled={isFlagged || complaintMutation.isPending}
+          className={`size-10 cursor-pointer flex items-center justify-center rounded-lg bg-white dark:bg-transparent border ${
+            isFlagged ? "border-brand-green" : "border-brand-btn"
+          } disabled:opacity-50 disabled:cursor-not-allowed`}
+        >
+          {isFlagged ? <FaCheck className="text-brand-green" /> : <FlagIcon />}
         </button>
         <button className="h-10 cursor-pointer bg-white dark:bg-[#2b2e3a] border border-[#e6e9ec] dark:border-[#2b2e3a] text-xs font-extrabold leading-4 text-brand-primary dark:text-white px-5 rounded-lg">
           Подробнее о сервере

@@ -22,10 +22,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function Header() {
-  const { isAuthenticated, logout } = useAuthStore();
-  const { data: user } = useGetUser();
+  const { isAuthenticated, logout, user: authUser } = useAuthStore();
+  const { data: queryUser } = useGetUser(isAuthenticated);
   const { t } = useTranslation();
   const logoutMutation = useLogout();
+
+  const user = authUser || queryUser;
 
   const handleLogout = async () => {
     try {

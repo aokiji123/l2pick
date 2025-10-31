@@ -1,14 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../api";
-import { Vote } from "../types/vote";
+import { Vote, VotesHistoryResponse } from "../types/vote";
 
 const getUserVotes = async (): Promise<Vote[]> => {
   const response = await axiosInstance.get("/user/votes");
   return response.data;
 };
 
-const getVotesHistory = async (): Promise<Vote[]> => {
-  const response = await axiosInstance.get("/votes/history");
+const getVotesHistoryForProject = async (
+  projectId: string,
+): Promise<VotesHistoryResponse> => {
+  const response = await axiosInstance.get(
+    `/projects/${projectId}/votes/history`,
+  );
   return response.data;
 };
 
@@ -20,10 +24,11 @@ export const useGetUserVotes = () => {
   });
 };
 
-export const useGetVotesHistory = () => {
+export const useGetVotesHistory = (projectId: string) => {
   return useQuery({
-    queryKey: ["votes", "history"],
-    queryFn: getVotesHistory,
+    queryKey: ["votes", "history", projectId],
+    queryFn: () => getVotesHistoryForProject(projectId),
     staleTime: 60 * 1000,
+    enabled: !!projectId && projectId !== "",
   });
 };

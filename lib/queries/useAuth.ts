@@ -34,7 +34,7 @@ const authProviderRedirect = async (provider: Provider) => {
 };
 
 const authProviderCallback = async (
-  provider: Provider
+  provider: Provider,
 ): Promise<AuthResponse> => {
   const response = await axiosInstance.get(`/auth/${provider}/callback`);
   return response.data;
@@ -90,10 +90,12 @@ export const useAuthTelegram = () => {
   });
 };
 
-export const useGetUser = () => {
+export const useGetUser = (isAuthenticated?: boolean) => {
   return useQuery({
     queryKey: ["auth", "user"],
     queryFn: getUser,
     staleTime: 60 * 1000,
+    enabled: isAuthenticated !== false,
+    retry: false,
   });
 };

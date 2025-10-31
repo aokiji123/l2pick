@@ -19,7 +19,7 @@ import Testimonials from "@/components/server-components/Testimonials";
 import { ChartAreaGradient } from "@/components/elements/ChartArea";
 import CustomDiaolog from "@/components/server-components/CustomDiaolog";
 import { useProjectBySlug } from "@/lib/queries/useProjects";
-import { ProjectDetail } from "@/lib/types/project";
+import { useGetVotesHistory } from "@/lib/queries/useVotes";
 
 const ProjectInfo = () => {
   const [isVoted, setIsVoted] = useState(false);
@@ -27,6 +27,9 @@ const ProjectInfo = () => {
   const slug = searchParams.get("slug") || "";
 
   const { data: project, isLoading, error } = useProjectBySlug(slug);
+  const { data: votesHistory, isLoading: isLoadingVotes } = useGetVotesHistory(
+    project?.id?.toString() || "",
+  );
 
   const handleVote = () => {
     if (!isVoted) {
@@ -211,7 +214,7 @@ const ProjectInfo = () => {
             <Testimonials project={project} />
           </TabsContent>
           <TabsContent value="history">
-            <ChartAreaGradient />
+            <ChartAreaGradient data={votesHistory} isLoading={isLoadingVotes} />
           </TabsContent>
         </Tabs>
       </div>

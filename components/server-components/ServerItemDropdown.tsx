@@ -18,6 +18,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useMakeComplaint } from "@/lib/queries/useComplaints";
 
 interface props {
   topserver?: boolean;
@@ -31,10 +32,26 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
   const [isVoted, setIsVoted] = useState(false);
   const route = useRouter();
   const { isAuthenticated } = useAuthStore();
+  const complaintMutation = useMakeComplaint();
 
   const handleVote = () => {
     if (!isVoted) {
       setIsVoted(true);
+    }
+  };
+
+  const handleComplaint = async () => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    try {
+      await complaintMutation.mutateAsync({
+        serverId: server.id.toString(),
+      });
+      setIsFlag(true);
+    } catch (error) {
+      console.error("Complaint error:", error);
     }
   };
 
@@ -76,8 +93,8 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
                 topserver
                   ? "text-[#f8b464]"
                   : server.has_vip_icon
-                  ? "text-brand-btn"
-                  : "text-brand-primary-3"
+                    ? "text-brand-btn"
+                    : "text-brand-primary-3"
               }`}
             >
               {server.icons &&
@@ -161,17 +178,20 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
               )}
               <button
                 onClick={() =>
+                  server.project &&
                   route.push(`/project-info?slug=${server.project.slug}`)
                 }
-                className="px-3 h-8 bg-[#464b55] text-white text-xs font-bold rounded-md hover:bg-opacity-90 transition-colors"
+                disabled={server.project?.slug === undefined}
+                className="px-3 h-8 bg-[#464b55] text-white text-xs font-bold rounded-md hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 подробнее
               </button>
               <button
-                onClick={() => setIsFlag(!isflag)}
+                onClick={handleComplaint}
+                disabled={isflag || complaintMutation.isPending}
                 className={`size-8 flex items-center justify-center rounded-md bg-white dark:bg-transparent border ${
                   isflag ? "border-brand-green" : "border-brand-btn"
-                }`}
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 {!isflag ? (
                   <FlagIcon />

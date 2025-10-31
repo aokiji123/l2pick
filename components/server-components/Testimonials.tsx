@@ -16,7 +16,7 @@ type TestimonialsProps = {
 
 const TestimonialCard = ({ testimonial }: { testimonial: ProjectReview }) => {
   const formattedDate = new Date(testimonial.created_at).toLocaleDateString(
-    "ru-RU"
+    "ru-RU",
   );
 
   return (
@@ -94,7 +94,7 @@ const ReviewForm = ({ projectId }: { projectId: number }) => {
       // Invalidate and refetch reviews
       await queryClient.invalidateQueries({ queryKey: ["reviews", projectId] });
       alert(
-        "Спасибо за ваш отзыв! Ваш отзыв будет опубликован после модерации."
+        "Спасибо за ваш отзыв! Ваш отзыв будет опубликован после модерации.",
       );
     } catch (error) {
       console.error("Error creating review:", error);
@@ -113,7 +113,7 @@ const ReviewForm = ({ projectId }: { projectId: number }) => {
           onChange={(e) => setReviewText(e.target.value)}
           placeholder="Напишите свой отзыв"
           rows={10}
-          className={`w-full lg:min-h-96 h-full p-4 rounded-xl border scroll-style border-[#d7dfe4] dark:border-[#21252f] bg-brand-gray-3 dark:bg-brand-dark text-xs text-brand-primary dark:text-white font-medium placeholder:text-brand-secondary outline-none dark:placeholder:text-[#535967]`}
+          className={`w-full min-h-13 lg:min-h-96 h-full p-4 rounded-xl border scroll-style border-[#d7dfe4] dark:border-[#21252f] bg-brand-gray-3 dark:bg-brand-dark text-xs text-brand-primary dark:text-white font-medium placeholder:text-brand-secondary outline-none dark:placeholder:text-[#535967]`}
           maxLength={maxCharacters}
         />
         {/* Character Counter */}
@@ -168,15 +168,13 @@ const ReviewForm = ({ projectId }: { projectId: number }) => {
 };
 
 const Testimonials = ({ project }: TestimonialsProps) => {
-  // Fetch reviews for the project
   const { data: reviewsData } = useReviewsForProject(project.id);
 
-  // Use fetched reviews if available, otherwise fall back to project.reviews
   const testimonials: ProjectReview[] = (reviewsData?.data ||
     project.reviews ||
     []) as ProjectReview[];
   const filteredTestimonials = testimonials.filter(
-    (review) => review.status === "approved"
+    (review) => review.status === "approved",
   );
 
   const reviewsCount = filteredTestimonials.length;
