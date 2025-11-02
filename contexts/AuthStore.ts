@@ -11,6 +11,7 @@ type AuthState = {
   login: (user: AuthUser, token: string) => void;
   logout: () => void;
   setToken: (token: string | null) => void;
+  setUser: (user: AuthUser) => void;
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -32,6 +33,9 @@ export const useAuthStore = create<AuthState>()(
       setToken: (token) => {
         set({ token });
       },
+      setUser: (user) => {
+        set({ user });
+      },
     }),
     {
       name: "auth-store",
@@ -42,6 +46,6 @@ export const useAuthStore = create<AuthState>()(
         isAuthenticated: state.isAuthenticated,
         // Don't persist token in zustand, we'll handle it separately
       }),
-    }
-  )
+    },
+  ),
 );

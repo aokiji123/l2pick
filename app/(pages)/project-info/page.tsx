@@ -17,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import GeneralInfo from "@/components/server-components/GeneralInfo";
 import Testimonials from "@/components/server-components/Testimonials";
 import { ChartAreaGradient } from "@/components/elements/ChartArea";
-import CustomDiaolog from "@/components/server-components/CustomDiaolog";
+import CustomDialog from "@/components/server-components/CustomDialog";
 import { useProjectBySlug } from "@/lib/queries/useProjects";
 import { useGetVotesHistory } from "@/lib/queries/useVotes";
 
@@ -170,7 +170,11 @@ const ProjectInfo = () => {
                     </div>
                   ) : (
                     <>
-                      <CustomDiaolog handleClick={handleVote} />
+                      <CustomDialog
+                        handleClick={handleVote}
+                        serverId={server.id.toString()}
+                        serverName={server.announce_name}
+                      />
                     </>
                   )}
                 </div>

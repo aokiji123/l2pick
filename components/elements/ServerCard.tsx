@@ -7,7 +7,7 @@ import { CommentIcon, FlagIcon } from "@/icons";
 import Link from "next/link";
 import { renderStars } from "./RenderStars";
 import CustomBadge from "./CustomBadge";
-import CustomDiaolog from "../server-components/CustomDiaolog";
+import CustomDialog from "../server-components/CustomDialog";
 import { useRouter } from "next/navigation";
 import { useMakeComplaint } from "@/lib/queries/useComplaints";
 import { useAuthStore } from "@/contexts/AuthStore";
@@ -92,8 +92,14 @@ const ServerCard: React.FC<ServerCardProps> = ({
       <div className="flex flex-col-reverse sm:flex-row items-start justify-between gap-3 sm:gap-1">
         <div className="flex flex-col md:flex-row justify-center flex-1 items-stretch gap-4">
           {/* Thumbnail Image */}
-          <div className="relative w-[148px] mx-auto sm:mx-0 h-[98px] rounded-xl overflow-hidden flex-shrink-0">
-            <Image src={image} alt={title} fill className="object-cover" />
+          <div className="relative w-[148px] mx-auto sm:mx-0 h-[98px] rounded-xl overflow-hidden flex-shrink-0 bg-gray-200 dark:bg-gray-700">
+            {image ? (
+              <Image src={image} alt={title} fill className="object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                No Image
+              </div>
+            )}
           </div>
 
           {/* Content */}
@@ -166,7 +172,11 @@ const ServerCard: React.FC<ServerCardProps> = ({
               </div>
             </div>
           ) : (
-            <CustomDiaolog handleClick={handleVote} />
+            <CustomDialog
+              handleClick={handleVote}
+              serverId={serverId.toString()}
+              serverName={title}
+            />
           )}
         </div>
 
@@ -233,7 +243,11 @@ const ServerCard: React.FC<ServerCardProps> = ({
                   </div>
                 </div>
               ) : (
-                <CustomDiaolog handleClick={handleVote} />
+                <CustomDialog
+                  handleClick={handleVote}
+                  serverId={serverId.toString()}
+                  serverName={title}
+                />
               )}
             </div>
             <Link

@@ -28,3 +28,13 @@ export type ServerVoteData = {
   server_name: string;
   votes: number;
 };
+
+export type CanVoteResponse = {
+  canVote: boolean;
+  next_vote_at: Date | null;
+};
+
+export type VoteResponse = {
+  message: string;
+  vote: Vote;
+};

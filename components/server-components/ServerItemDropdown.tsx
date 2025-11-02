@@ -10,7 +10,8 @@ import {
   AuthRequiredDialog,
   VoteDialog,
   VoteSuccessDialog,
-} from "./CustomDiaolog";
+  CannotVoteDialog,
+} from "./CustomDialog";
 import { useAuthStore } from "@/contexts/AuthStore";
 import DateResponse from "../elements/DateResponse";
 import {
@@ -19,6 +20,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useMakeComplaint } from "@/lib/queries/useComplaints";
+import { useCanVoteForServer, useVoteForServer } from "@/lib/queries/useVotes";
 
 interface props {
   topserver?: boolean;
@@ -27,16 +29,48 @@ interface props {
 
 const ServerItemDropdown = ({ topserver = false, server }: props) => {
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-  const [isSucces, setIsSucces] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [isflag, setIsFlag] = useState(false);
   const [isVoted, setIsVoted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const route = useRouter();
   const { isAuthenticated } = useAuthStore();
   const complaintMutation = useMakeComplaint();
 
-  const handleVote = () => {
-    if (!isVoted) {
-      setIsVoted(true);
+  const { data: canVote, isLoading: isCheckingVote } = useCanVoteForServer(
+    server.id.toString(),
+  );
+  const voteMutation = useVoteForServer(server.id.toString());
+
+  const handleVoteClick = async () => {
+    if (!canVote) return;
+
+    try {
+      await voteMutation.mutateAsync();
+      setShowSuccess(true);
+      setErrorMessage("");
+    } catch (error: any) {
+      console.error("Vote error:", error);
+      const message =
+        error?.response?.data?.message ||
+        "Произошла ошибка при голосовании. Попробуйте позже.";
+      setErrorMessage(message);
+    }
+  };
+
+  const handleVoteSuccess = () => {
+    setIsVoted(true);
+    setDialogOpen(false);
+    setShowSuccess(false);
+    setErrorMessage("");
+  };
+
+  const handleDialogChange = (open: boolean) => {
+    setDialogOpen(open);
+    if (!open) {
+      setErrorMessage("");
+      setShowSuccess(false);
     }
   };
 
@@ -161,18 +195,29 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
                   </div>
                 </div>
               ) : (
-                <Dialog>
-                  <DialogTrigger className=" bg-brand-btn cursor-pointer hover:bg-brand-btn/90 text-white rounded-lg px-4 h-8 flex items-center justify-center gap-2 text-xs font-medium transition-colors relative z-10 before:absolute before:size-full before:bg-brand-btn before:top-0 before:left-px before:blur-md before:opacity-60 before:-z-10">
-                    ПРОГОЛОСОВАТЬ
+                <Dialog open={dialogOpen} onOpenChange={handleDialogChange}>
+                  <DialogTrigger
+                    disabled={isCheckingVote}
+                    className="bg-brand-btn cursor-pointer hover:bg-brand-btn/90 text-white rounded-lg px-4 h-8 flex items-center justify-center gap-2 text-xs font-medium transition-colors relative z-10 before:absolute before:size-full before:bg-brand-btn before:top-0 before:left-px before:blur-md before:opacity-60 before:-z-10 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isCheckingVote ? "..." : "ПРОГОЛОСОВАТЬ"}
                   </DialogTrigger>
-                  {isAuthenticated ? (
-                    !isSucces ? (
-                      <VoteDialog handleClick={() => setIsSucces(true)} />
-                    ) : (
-                      <VoteSuccessDialog handleClick={handleVote} />
-                    )
-                  ) : (
+                  {!isAuthenticated ? (
                     <AuthRequiredDialog />
+                  ) : showSuccess ? (
+                    <VoteSuccessDialog
+                      handleClick={handleVoteSuccess}
+                      serverName={server.announce_name}
+                    />
+                  ) : canVote ? (
+                    <VoteDialog
+                      handleClick={handleVoteClick}
+                      isLoading={voteMutation.isPending}
+                      serverName={server.announce_name}
+                      errorMessage={errorMessage}
+                    />
+                  ) : (
+                    <CannotVoteDialog />
                   )}
                 </Dialog>
               )}

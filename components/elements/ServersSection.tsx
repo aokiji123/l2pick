@@ -61,7 +61,7 @@ export default function ServersSection() {
   });
 
   const convertToServerResponse = (
-    servers: any[] | undefined
+    servers: any[] | undefined,
   ): ServerResponse => ({
     data: servers || [],
   });
@@ -70,60 +70,76 @@ export default function ServersSection() {
   const openedServersData = convertToServerResponse(groupedData?.data?.opened);
   const todayServersData = convertToServerResponse(groupedData?.data?.today);
   const tomorrowServersData = convertToServerResponse(
-    groupedData?.data?.tomorrow
+    groupedData?.data?.tomorrow,
   );
 
   return (
     <>
-      <Tabs defaultValue="soon" className="md:hidden w-full">
-        <TabsContent value="soon">
-          <Section
-            icon={
-              <MdAccessTime className="text-brand-primary-3 dark:text-brand-btn" />
-            }
-            title="Скоро откроются"
-            vip={true}
-            servers={soonServers}
-          />
-        </TabsContent>
-        <TabsContent value="opened">
-          <Section
-            icon={
-              <IoRocketSharp className="text-brand-primary-3 dark:text-brand-btn" />
-            }
-            title="Уже открылись"
-            vip={true}
-            servers={openedServersData}
-          />
-        </TabsContent>
-        <TabsList className="bg-white dark:bg-brand-primary-3 h-14 grid grid-cols-2 fixed z-50 bottom-0 left-0 justify-start flex-wrap gap-3 w-full">
-          <TabsTrigger
-            className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white"
-            value="soon"
-          >
-            Открытие скоро
-          </TabsTrigger>
-          <TabsTrigger
-            className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white"
-            value="opened"
-          >
-            Уже открытые
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-      <div className="grid md:hidden grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-y-5 gap-x-3.5 ">
-        <Section
-          title="Сегодня"
-          subtitle="(26.07.2021 - Пятница)"
-          servers={todayServersData}
-        />
-        <Section
-          title="Завтра"
-          subtitle="(26.07.2021 - Пятница)"
-          servers={tomorrowServersData}
-        />
+      <div className="md:hidden w-full relative">
+        <Tabs defaultValue="soon" className="w-full">
+          <TabsList className="bg-white dark:bg-brand-primary-3 h-14 grid grid-cols-4 sticky top-0 left-0 z-50 justify-start flex-wrap gap-3 w-full p-2 mb-3">
+            <TabsTrigger
+              className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white text-xs"
+              value="soon"
+            >
+              Скоро
+            </TabsTrigger>
+            <TabsTrigger
+              className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white text-xs"
+              value="opened"
+            >
+              Открытые
+            </TabsTrigger>
+            <TabsTrigger
+              className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white text-xs"
+              value="today"
+            >
+              Сегодня
+            </TabsTrigger>
+            <TabsTrigger
+              className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white text-xs"
+              value="tomorrow"
+            >
+              Завтра
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="soon">
+            <Section
+              icon={
+                <MdAccessTime className="text-brand-primary-3 dark:text-brand-btn" />
+              }
+              title="Скоро откроются"
+              vip={true}
+              servers={soonServers}
+            />
+          </TabsContent>
+          <TabsContent value="opened">
+            <Section
+              icon={
+                <IoRocketSharp className="text-brand-primary-3 dark:text-brand-btn" />
+              }
+              title="Уже открылись"
+              vip={true}
+              servers={openedServersData}
+            />
+          </TabsContent>
+          <TabsContent value="today">
+            <Section
+              title="Сегодня"
+              subtitle="(26.07.2021 - Пятница)"
+              servers={todayServersData}
+            />
+          </TabsContent>
+          <TabsContent value="tomorrow">
+            <Section
+              title="Завтра"
+              subtitle="(26.07.2021 - Пятница)"
+              servers={tomorrowServersData}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
-      <div className="hidden md:grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-3.5 ">
+      <div className="hidden md:grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-5.5 ">
         <Section
           icon={
             <MdAccessTime className="text-brand-primary-3 dark:text-brand-btn" />

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import ThemeToggle from "../elements/ThemeToggle";
 import LanguageSelector from "../elements/LanguageSelector";
 import LoginButton from "../elements/LoginButton";
@@ -22,12 +22,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function Header() {
-  const { isAuthenticated, logout, user: authUser } = useAuthStore();
+  const { isAuthenticated, logout, user: authUser, setUser } = useAuthStore();
   const { data: queryUser } = useGetUser(isAuthenticated);
   const { t } = useTranslation();
   const logoutMutation = useLogout();
 
   const user = authUser || queryUser;
+
+  // Sync user data from query to auth store
+  useEffect(() => {
+    if (queryUser && isAuthenticated) {
+      setUser(queryUser);
+    }
+  }, [queryUser, isAuthenticated, setUser]);
 
   const handleLogout = async () => {
     try {
