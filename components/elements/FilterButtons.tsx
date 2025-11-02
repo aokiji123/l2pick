@@ -22,7 +22,7 @@ const FilterButtons = ({ rates, chronicles, servers, colSpan }: props) => {
     filterId: string,
     filterType: "rate" | "chronicle" | "server",
     filterValue: string,
-    serverSlug?: string
+    serverSlug?: string,
   ) => {
     if (filterType === "rate") {
       setPendingRate(filterId);
@@ -41,14 +41,14 @@ const FilterButtons = ({ rates, chronicles, servers, colSpan }: props) => {
           onClick={() =>
             handleFilterClick(rate.name.replace("x", ""), "rate", rate.name)
           }
-          className={`${colSpan} cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border  rounded-xl transition-all duration-200 ${
+          className={`${colSpan} cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border  rounded-xl transition-all duration-200 px-2 ${
             filters.selectedRate === rate.name.replace("x", "") ||
             pendingFilters.pendingRate === rate.name.replace("x", "")
               ? "border-[#ee8b21]"
               : "border-brand-btn-gray-3"
           }`}
         >
-          {rate.name}
+          <span className="truncate">{rate.name}</span>
         </button>
       ))}
       {chronicles?.map((chronicle) => (
@@ -58,17 +58,17 @@ const FilterButtons = ({ rates, chronicles, servers, colSpan }: props) => {
             handleFilterClick(
               chronicle.id.toString(),
               "chronicle",
-              chronicle.name
+              chronicle.name,
             )
           }
-          className={`${colSpan} cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border  rounded-xl transition-all duration-200 ${
+          className={`${colSpan} cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border  rounded-xl transition-all duration-200 px-2 ${
             filters.selectedChronicle === chronicle.id ||
             pendingFilters.pendingChronicle === chronicle.id
               ? "border-[#ee8b21]"
               : "border-brand-btn-gray-3"
           }`}
         >
-          {chronicle.name}
+          <span className="truncate">{chronicle.name}</span>
         </button>
       ))}
       {servers?.map((server) => (
@@ -79,12 +79,12 @@ const FilterButtons = ({ rates, chronicles, servers, colSpan }: props) => {
               server.id.toString(),
               "server",
               server.announce_name,
-              server.url_slug
+              server.url_slug,
             )
           }
-          className={`${colSpan} cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border  rounded-xl transition-all duration-200 border-brand-btn-gray-3`}
+          className={`${colSpan} cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border  rounded-xl transition-all duration-200 border-brand-btn-gray-3 px-2`}
         >
-          {server.announce_name}
+          <span className="truncate">{server.announce_name}</span>
         </button>
       ))}
     </>

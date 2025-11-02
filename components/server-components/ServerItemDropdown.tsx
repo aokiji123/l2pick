@@ -26,11 +26,28 @@ import { useTranslation } from "@/contexts/LanguageContext";
 interface props {
   topserver?: boolean;
   server: Server;
+  isOpen?: boolean;
+  onToggle?: () => void;
 }
 
-const ServerItemDropdown = ({ topserver = false, server }: props) => {
+const ServerItemDropdown = ({
+  topserver = false,
+  server,
+  isOpen = false,
+  onToggle,
+}: props) => {
   const { t } = useTranslation();
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+
+  // Use controlled state if onToggle is provided, otherwise use local state
+  const accordionIsOpen = onToggle ? isOpen : isAccordionOpen;
+  const handleAccordionToggle = () => {
+    if (onToggle) {
+      onToggle();
+    } else {
+      setIsAccordionOpen(!isAccordionOpen);
+    }
+  };
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isflag, setIsFlag] = useState(false);
@@ -89,10 +106,28 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
     }
   };
 
+  const handleNavigateToProject = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    if (!server.id || !server.project?.slug) {
+      return;
+    }
+    
+    const params = new URLSearchParams({
+      slug: server.project.slug,
+      serverId: server.id.toString(),
+    });
+    const url = `/project-info?${params.toString()}`;
+    route.push(url);
+  };
+
   return (
     <div className="relative">
       <button
-        onClick={() => setIsAccordionOpen(!isAccordionOpen)}
+        onClick={handleAccordionToggle}
         className={`${
           topserver
             ? "bg-[linear-gradient(180deg,#f1a348,#e88646,#e37944,#e17144,#e17043)] text-white"
@@ -171,7 +206,7 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
       </button>
 
       {/* Accordion Content */}
-      {isAccordionOpen && (
+      {accordionIsOpen && (
         <div
           className={` absolute top-full -translate-y-2 left-0 right-0 mt-1 bg-[#faf3ef] dark:bg-brand-main-dark rounded-lg rounded-t-none z-50 border border-t-0 border-brand-btn transition duration-500 py-3 pl-4 pr-2`}
         >
@@ -224,11 +259,8 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
                 </Dialog>
               )}
               <button
-                onClick={() =>
-                  server.project &&
-                  route.push(`/project-info?slug=${server.project.slug}`)
-                }
-                disabled={server.project?.slug === undefined}
+                onClick={handleNavigateToProject}
+                disabled={server.project?.slug === undefined || !server.id}
                 className="px-3 h-8 bg-[#464b55] text-white text-xs font-bold rounded-md hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t("server_item_more_details")}

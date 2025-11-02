@@ -7,9 +7,10 @@ import { useTranslation } from "@/contexts/LanguageContext";
 
 type GeneralInfoProps = {
   project: ProjectDetail;
+  selectedServerId?: string | null;
 };
 
-const GeneralInfo = ({ project }: GeneralInfoProps) => {
+const GeneralInfo = ({ project, selectedServerId }: GeneralInfoProps) => {
   const { t } = useTranslation();
   if (!project?.servers || project.servers.length === 0) {
     return (
@@ -21,8 +22,13 @@ const GeneralInfo = ({ project }: GeneralInfoProps) => {
     );
   }
 
-  const defaultServer = project.servers[0];
-  const defaultValue = defaultServer.url_slug || defaultServer.id.toString();
+  // Find the selected server by ID if provided, otherwise use the first server
+  const selectedServer = selectedServerId
+    ? project.servers.find((s) => s.id.toString() === selectedServerId) ||
+      project.servers[0]
+    : project.servers[0];
+  
+  const defaultValue = selectedServer.url_slug || selectedServer.id.toString();
 
   return (
     <div className="py-6 px-3 lg:px-7">

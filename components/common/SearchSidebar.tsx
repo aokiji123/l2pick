@@ -13,6 +13,7 @@ import { useChronicles } from "@/lib/queries/useChronicles";
 import { useServers, useTop5Servers } from "@/lib/queries/useServers";
 import { useFilter } from "@/contexts/FilterContext";
 import { useTranslation } from "@/contexts/LanguageContext";
+import { useRegisterLoader } from "@/lib/hooks/useRegisterLoader";
 
 const SearchSidebar = () => {
   return (
@@ -30,13 +31,20 @@ export const FilterContent = () => {
     isLoading: advertisementsBackgroundLoading,
   } = useAdvertisementsBackground();
 
-  const { data: rates } = useRates();
-  const { data: chronicles } = useChronicles();
-  const { data: top5Servers } = useTop5Servers();
-  const { data: servers } = useServers({
+  const { data: rates, isLoading: ratesLoading } = useRates();
+  const { data: chronicles, isLoading: chroniclesLoading } = useChronicles();
+  const { data: top5Servers, isLoading: top5Loading } = useTop5Servers();
+  const { data: servers, isLoading: serversLoading } = useServers({
     per_page: 6,
     sort: "rating",
   });
+
+  // Register all data loaders
+  useRegisterLoader(advertisementsBackgroundLoading, "sidebar-advertisements");
+  useRegisterLoader(ratesLoading, "sidebar-rates");
+  useRegisterLoader(chroniclesLoading, "sidebar-chronicles");
+  useRegisterLoader(top5Loading, "sidebar-top5");
+  useRegisterLoader(serversLoading, "sidebar-servers");
 
   return (
     <>
@@ -97,14 +105,14 @@ export const FilterContent = () => {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            {top5Servers?.data.map((server) => {
-              const bgClass =
-                server.id === 1 ? "overflow-hidden" : "bg-[#323741]";
+            {top5Servers?.data.map((server, index) => {
+              const rank = index + 1;
+              const bgClass = index === 0 ? "overflow-hidden" : "bg-[#323741]";
 
               const rankClass =
-                server.id === 1
+                index === 0
                   ? "bg-[#ea704e]"
-                  : server.id === 2 || server.id === 3
+                  : index === 1 || index === 2
                   ? "bg-[linear-gradient(180deg,#b8573c,#ac543c,#874c3e,#594140,#4f3f40)]"
                   : "bg-[#414753]";
 
@@ -118,7 +126,7 @@ export const FilterContent = () => {
                     <span
                       className={`w-7 h-7 flex items-center justify-center rounded-xl text-xs font-extrabold text-white ${rankClass}`}
                     >
-                      {server.id}
+                      {rank}
                     </span>
                     <span className="text-white text-sm font-medium">
                       {server.announce_name}
@@ -128,7 +136,7 @@ export const FilterContent = () => {
                   {/* <span className="text-sm text-brand-orange font-semibold z-20">
                     {server.price}
                   </span> */}
-                  {server.id === 1 && (
+                  {index === 0 && (
                     <>
                       <div className="absolute size-full left-0 bg-[linear-gradient(135deg,#b8573c,#ac543c,#874c3e,#594140,#4f3f40)] opacity-80 z-10"></div>
                       <Image

@@ -7,6 +7,8 @@ import { useGroupedServers } from "@/lib/queries/useServers";
 import { ServerResponse } from "@/lib/types/server";
 import { useFilter } from "@/contexts/FilterContext";
 import { useTranslation } from "@/contexts/LanguageContext";
+import { useRegisterLoader } from "@/lib/hooks/useRegisterLoader";
+import { useState } from "react";
 
 function Section({
   title,
@@ -22,6 +24,12 @@ function Section({
   servers?: ServerResponse;
 }) {
   const { t } = useTranslation();
+  const [openAccordionId, setOpenAccordionId] = useState<number | null>(null);
+
+  const handleToggle = (serverId: number) => {
+    setOpenAccordionId((prev) => (prev === serverId ? null : serverId));
+  };
+
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between gap-3 mb-3">
@@ -45,6 +53,8 @@ function Section({
             key={server.id}
             topserver={index === 0}
             server={server}
+            isOpen={openAccordionId === server.id}
+            onToggle={() => handleToggle(server.id)}
           />
         ))}
       </div>
@@ -56,15 +66,18 @@ export default function ServersSection() {
   const { t, currentLanguage } = useTranslation();
   const { filters } = useFilter();
 
-  const { data: groupedData } = useGroupedServers({
+  const { data: groupedData, isLoading } = useGroupedServers({
     ...(filters.selectedRate && { rate: filters.selectedRate }),
     ...(filters.selectedChronicle && {
       chronicle_id: filters.selectedChronicle,
     }),
   });
 
+  // Register this component's loading state with the global loader
+  useRegisterLoader(isLoading, "servers-section");
+
   const convertToServerResponse = (
-    servers: any[] | undefined
+    servers: any[] | undefined,
   ): ServerResponse => ({
     data: servers || [],
   });
@@ -93,7 +106,7 @@ export default function ServersSection() {
   const openedServersData = convertToServerResponse(groupedData?.data?.opened);
   const todayServersData = convertToServerResponse(groupedData?.data?.today);
   const tomorrowServersData = convertToServerResponse(
-    groupedData?.data?.tomorrow
+    groupedData?.data?.tomorrow,
   );
 
   return (

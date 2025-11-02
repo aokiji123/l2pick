@@ -5,14 +5,39 @@ import DateResponse from "@/components/elements/DateResponse";
 import ServerActions from "@/components/server-components/ServerActions";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { useServers } from "@/lib/queries/useServers";
 import { useTranslation } from "@/contexts/LanguageContext";
+import { useAuthStore } from "@/contexts/AuthStore";
+import { useRouter } from "next/navigation";
+import { useRegisterLoader } from "@/lib/hooks/useRegisterLoader";
 
 const Servers = () => {
+  const router = useRouter();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const hasAuthHydrated = useAuthStore((state) => state._hasHydrated);
   const { data: myServersData, isLoading } = useServers({ my_servers: 1 });
   const myServers = myServersData?.data || [];
   const { t } = useTranslation();
+
+  // Register loading state with the global loader
+  useRegisterLoader(isLoading, "my-servers-data");
+
+  useEffect(() => {
+    // Only redirect after hydration is complete
+    if (hasAuthHydrated && !isAuthenticated) {
+      router.push("/auth");
+    }
+  }, [isAuthenticated, hasAuthHydrated, router]);
+
+  // Show nothing while waiting for hydration
+  if (!hasAuthHydrated) {
+    return null;
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <>
@@ -30,11 +55,7 @@ const Servers = () => {
             </div>
             <div className="order-1 xl:order-3 col-span-2 xl:col-span-2 py-7 px-4 md:p-7 min-w-[250px] w-full h-full overflow-hidden flex flex-col">
               <div className="space-y-4 overflow-y-auto max-h-[690px] pr-2 scroll-style">
-                {isLoading ? (
-                  <div className="bg-brand-gray-3 dark:bg-[#20242c] rounded-2xl p-5 text-center py-8 text-brand-header-light dark:text-white">
-                    {t("my_servers_loading")}
-                  </div>
-                ) : myServers.length > 0 ? (
+                {myServers.length > 0 ? (
                   myServers.map((server) => (
                     <div
                       key={server.id}
@@ -118,15 +139,15 @@ const Servers = () => {
                           server.moderation_status === "approved"
                             ? "bg-brand-green"
                             : server.moderation_status === "pending"
-                            ? "bg-yellow-500"
-                            : "bg-red-500"
+                              ? "bg-yellow-500"
+                              : "bg-red-500"
                         }`}
                       >
                         {server.moderation_status === "approved"
                           ? t("my_servers_moderated_active")
                           : server.moderation_status === "pending"
-                          ? t("my_servers_under_moderation")
-                          : t("my_servers_rejected")}
+                            ? t("my_servers_under_moderation")
+                            : t("my_servers_rejected")}
                       </button>
                     </div>
                   ))

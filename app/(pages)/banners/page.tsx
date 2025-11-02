@@ -1,14 +1,35 @@
 "use client";
 
 import MenuSidebar from "@/components/common/MenuSidebar";
-import React from "react";
+import React, { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BannersItem from "@/components/elements/BannersItem";
 import MobileMenu from "@/components/common/MobileMenu";
 import { useTranslation } from "@/contexts/LanguageContext";
+import { useAuthStore } from "@/contexts/AuthStore";
+import { useRouter } from "next/navigation";
 
 const Banners = () => {
+  const router = useRouter();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const hasAuthHydrated = useAuthStore((state) => state._hasHydrated);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    // Only redirect after hydration is complete
+    if (hasAuthHydrated && !isAuthenticated) {
+      router.push("/auth");
+    }
+  }, [isAuthenticated, hasAuthHydrated, router]);
+
+  // Show nothing while waiting for hydration
+  if (!hasAuthHydrated) {
+    return null;
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <>

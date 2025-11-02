@@ -21,35 +21,29 @@ import CustomDialog from "@/components/server-components/CustomDialog";
 import { useProjectBySlug } from "@/lib/queries/useProjects";
 import { useGetVotesHistory } from "@/lib/queries/useVotes";
 import { useTranslation } from "@/contexts/LanguageContext";
+import { useRegisterLoader } from "@/lib/hooks/useRegisterLoader";
 
 const ProjectInfo = () => {
   const [isVoted, setIsVoted] = useState(false);
   const searchParams = useSearchParams();
   const slug = searchParams.get("slug") || "";
+  const serverIdParam = searchParams.get("serverId");
   const { t } = useTranslation();
 
   const { data: project, isLoading, error } = useProjectBySlug(slug);
   const { data: votesHistory, isLoading: isLoadingVotes } = useGetVotesHistory(
-    project?.id?.toString() || "",
+    project?.id?.toString() || ""
   );
+
+  // Register loading states with the global loader
+  useRegisterLoader(isLoading, "project-info-project");
+  useRegisterLoader(isLoadingVotes, "project-info-votes");
 
   const handleVote = () => {
     if (!isVoted) {
       setIsVoted(true);
     }
   };
-
-  if (isLoading) {
-    return (
-      <div className="w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl p-3 lg:p-4 mb-4">
-        <div className="flex justify-center items-center h-64">
-          <div className="text-brand-primary-3 dark:text-white">
-            {t("project_info_loading")}
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (error || !project) {
     return (
@@ -63,8 +57,11 @@ const ProjectInfo = () => {
     );
   }
 
-  // Get the first server from the project
-  const server = project.servers?.[0];
+  // Find the server by ID if serverId is provided, otherwise use the first server
+  const server = serverIdParam
+    ? project?.servers?.find((s) => s.id.toString() === serverIdParam) ||
+      project?.servers?.[0]
+    : project?.servers?.[0];
 
   // If no server is found
   if (!server) {
@@ -214,7 +211,7 @@ const ProjectInfo = () => {
             </TabsList>
           </div>
           <TabsContent value="general">
-            <GeneralInfo project={project} />
+            <GeneralInfo project={project} selectedServerId={serverIdParam} />
           </TabsContent>
           <TabsContent value="reviews">
             <Testimonials project={project} />

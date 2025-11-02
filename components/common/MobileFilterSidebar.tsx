@@ -14,10 +14,14 @@ import Link from "next/link";
 import { TopIcon } from "@/icons";
 import { useTop5Servers } from "@/lib/queries/useServers";
 import { useTranslation } from "@/contexts/LanguageContext";
+import { useRegisterLoader } from "@/lib/hooks/useRegisterLoader";
 
 const MobileFilterSidebar = () => {
-  const { data: top5Servers } = useTop5Servers();
+  const { data: top5Servers, isLoading } = useTop5Servers();
   const { t } = useTranslation();
+
+  // Register this component's loading state with the global loader
+  useRegisterLoader(isLoading, "mobile-sidebar-top5");
 
   return (
     <Sheet>
@@ -46,8 +50,8 @@ const MobileFilterSidebar = () => {
                 server.id === 1
                   ? "bg-[#ea704e]"
                   : server.id === 2 || server.id === 3
-                  ? "bg-[linear-gradient(180deg,#b8573c,#ac543c,#874c3e,#594140,#4f3f40)]"
-                  : "bg-[#414753]";
+                    ? "bg-[linear-gradient(180deg,#b8573c,#ac543c,#874c3e,#594140,#4f3f40)]"
+                    : "bg-[#414753]";
 
               return (
                 <Link

@@ -185,7 +185,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-2">
           <Link
-            href={`/project-info?slug=${slug || ""}`}
+            href={`/project-info?slug=${slug || ""}&serverId=${serverId}`}
             className="flex-1 w-full min-h-10 flex items-center justify-center text-xs font-extrabold hover:opacity-90 py-2 text-brand-btn bg-white dark:bg-[#2b2e3a] border border-[#e6e9ec] dark:border-[#2b2e3a] rounded-lg"
           >
             {t("project_info_play")}
@@ -205,7 +205,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
               )}
             </button>
             <button
-              onClick={() => router.push(`/project-info?slug=${slug || ""}`)}
+              onClick={() => router.push(`/project-info?slug=${slug || ""}&serverId=${serverId}`)}
               className="flex-1 h-10 cursor-pointer bg-white dark:bg-[#2b2e3a] border border-[#e6e9ec] dark:border-[#2b2e3a] text-xs font-extrabold leading-4 text-brand-primary dark:text-white px-3 rounded-lg"
             >
               {t("server_card_more_info")}
@@ -253,7 +253,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
               )}
             </div>
             <Link
-              href={`/project-info?slug=${slug || ""}`}
+              href={`/project-info?slug=${slug || ""}&serverId=${serverId}`}
               className="flex items-center whitespace-nowrap text-xs font-extrabold hover:opacity-90 px-3 text-brand-btn"
             >
               {t("project_info_play")}
@@ -270,7 +270,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
           {isFlagged ? <FaCheck className="text-brand-green" /> : <FlagIcon />}
         </button>
         <button
-          onClick={() => router.push(`/project-info?slug=${slug || ""}`)}
+          onClick={() => router.push(`/project-info?slug=${slug || ""}&serverId=${serverId}`)}
           className="h-10 cursor-pointer bg-white dark:bg-[#2b2e3a] border border-[#e6e9ec] dark:border-[#2b2e3a] text-xs font-extrabold leading-4 text-brand-primary dark:text-white px-5 rounded-lg"
         >
           {t("server_card_more_info_detailed")}

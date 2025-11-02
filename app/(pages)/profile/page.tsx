@@ -7,9 +7,12 @@ import { useGetUser } from "@/lib/queries/useAuth";
 import { useGetUserVotes } from "@/lib/queries/useVotes";
 import { useChangeUserPassword } from "@/lib/queries/useUser";
 import { ChangeUserPassword } from "@/lib/types/user";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "@/contexts/LanguageContext";
+import { useAuthStore } from "@/contexts/AuthStore";
+import { useRouter } from "next/navigation";
+import { useRegisterLoader } from "@/lib/hooks/useRegisterLoader";
 
 // Utility function to format date from ISO string to DD.MM.YYYY
 const formatDate = (isoString: string): string => {
@@ -21,10 +24,17 @@ const formatDate = (isoString: string): string => {
 };
 
 const Profile = () => {
+  const router = useRouter();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const hasAuthHydrated = useAuthStore((state) => state._hasHydrated);
   const { data: user, isLoading, error } = useGetUser();
-  const { data: votes } = useGetUserVotes();
+  const { data: votes, isLoading: votesLoading } = useGetUserVotes();
   const changePasswordMutation = useChangeUserPassword();
   const { t } = useTranslation();
+
+  // Register loading states with the global loader
+  useRegisterLoader(isLoading, "profile-user");
+  useRegisterLoader(votesLoading, "profile-votes");
 
   const [formData, setFormData] = useState<ChangeUserPassword>({
     old_password: "",
@@ -33,6 +43,22 @@ const Profile = () => {
   });
 
   const [errors, setErrors] = useState<Partial<ChangeUserPassword>>({});
+
+  useEffect(() => {
+    // Only redirect after hydration is complete
+    if (hasAuthHydrated && !isAuthenticated) {
+      router.push("/auth");
+    }
+  }, [isAuthenticated, hasAuthHydrated, router]);
+
+  // Show nothing while waiting for hydration
+  if (!hasAuthHydrated) {
+    return null;
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const validateForm = (): boolean => {
     const newErrors: Partial<ChangeUserPassword> = {};
@@ -118,18 +144,7 @@ const Profile = () => {
           <div className="grid grid-cols-1 xl:grid-cols-2 items-stretch min-h-full">
             <div className="max-h-[938px] h-full overflow-y-auto scroll-style gap-5 divide-y divide-brand-slate-gray/30 ">
               <div className="grid grid-cols-1 items-start justify-start py-6 px-3 md:px-6 ">
-                {isLoading ? (
-                  <div className="flex flex-col gap-2 sm:flex-row items-center sm:justify-between">
-                    <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-                      <div className="size-16 sm:size-24 rounded-2xl bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
-                      <div className="flex-1 text-center sm:text-left space-y-2">
-                        <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                        <div className="h-3 w-40 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                        <div className="h-3 w-36 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                      </div>
-                    </div>
-                  </div>
-                ) : error ? (
+                {error ? (
                   <div className="flex items-center justify-center p-8">
                     <div className="text-center">
                       <p className="text-red-500 mb-2">
