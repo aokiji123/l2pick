@@ -13,23 +13,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { TopIcon } from "@/icons";
 import { useTop5Servers } from "@/lib/queries/useServers";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const MobileFilterSidebar = () => {
   const { data: top5Servers } = useTop5Servers();
+  const { t } = useTranslation();
 
   return (
     <Sheet>
       <div>
         <SheetTrigger className="lg:hidden w-full cursor-pointer flex items-center justify-center gap-2 bg-brand-btn-gray-3 text-white text-sm h-10 border border-brand-btn-gray-3 rounded-xl transition-all duration-200 mb-3">
           <CiFilter className="text-lg stroke-1" />
-          Фильтры
+          {t("mobile_filter_title")}
         </SheetTrigger>
         <div className="lg:hidden bg-[#292c34] p-5 rounded-xl w-full mb-5">
           {/* Title */}
           <div className="flex items-center justify-center gap-2 mb-4">
             <TopIcon />
             <h2 className="text-white font-bold uppercase tracking-[1px]">
-              ТОП 5 СЕРВЕРОВ
+              {t("mobile_top_5_servers")}
             </h2>
           </div>
 

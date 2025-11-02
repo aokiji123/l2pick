@@ -15,15 +15,9 @@ import {
 } from "@/components/ui/chart";
 import { useState } from "react";
 import { VotesHistoryResponse } from "@/lib/types/vote";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 export const description = "An area chart with gradient fill and time filters";
-
-const chartConfig = {
-  votes: {
-    label: "Голоса",
-    color: "var(--chart-1)",
-  },
-} satisfies ChartConfig;
 
 type TimeFilter = "7days" | "30days" | "alltime";
 
@@ -33,7 +27,15 @@ interface ChartAreaGradientProps {
 }
 
 export function ChartAreaGradient({ data, isLoading }: ChartAreaGradientProps) {
+  const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState<TimeFilter>("7days");
+
+  const chartConfig = {
+    votes: {
+      label: t("chart_votes"),
+      color: "var(--chart-1)",
+    },
+  } satisfies ChartConfig;
 
   const getChartData = () => {
     const chartDataWithFormattedDates = data?.data.chart_data.map((item) => ({
@@ -70,13 +72,13 @@ export function ChartAreaGradient({ data, isLoading }: ChartAreaGradientProps) {
   const getFilterLabel = (filter: TimeFilter) => {
     switch (filter) {
       case "7days":
-        return "7 дней";
+        return t("chart_7_days");
       case "30days":
-        return "30 дней";
+        return t("chart_30_days");
       case "alltime":
-        return "Всё время";
+        return t("chart_all_time");
       default:
-        return "7 дней";
+        return t("chart_7_days");
     }
   };
 
@@ -85,7 +87,7 @@ export function ChartAreaGradient({ data, isLoading }: ChartAreaGradientProps) {
       <div className="py-6 px-3 lg:px-7">
         <div className="flex justify-center items-center h-64">
           <div className="text-brand-primary-3 dark:text-white">
-            Загрузка статистики...
+            {t("chart_loading")}
           </div>
         </div>
       </div>
@@ -96,7 +98,7 @@ export function ChartAreaGradient({ data, isLoading }: ChartAreaGradientProps) {
     <div className="py-6 px-3 lg:px-7">
       <div className="flex flex-col sm:flex-row gap-3 justify-between items-center mb-6">
         <h3 className="font-extrabold text-brand-primary-3 dark:text-white">
-          Статистика голосов
+          {t("chart_statistics_title")}
         </h3>
         <div className="flex gap-2">
           {(["7days", "30days", "alltime"] as TimeFilter[]).map((filter) => (

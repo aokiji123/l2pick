@@ -20,11 +20,13 @@ import { ChartAreaGradient } from "@/components/elements/ChartArea";
 import CustomDialog from "@/components/server-components/CustomDialog";
 import { useProjectBySlug } from "@/lib/queries/useProjects";
 import { useGetVotesHistory } from "@/lib/queries/useVotes";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const ProjectInfo = () => {
   const [isVoted, setIsVoted] = useState(false);
   const searchParams = useSearchParams();
   const slug = searchParams.get("slug") || "";
+  const { t } = useTranslation();
 
   const { data: project, isLoading, error } = useProjectBySlug(slug);
   const { data: votesHistory, isLoading: isLoadingVotes } = useGetVotesHistory(
@@ -42,7 +44,7 @@ const ProjectInfo = () => {
       <div className="w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl p-3 lg:p-4 mb-4">
         <div className="flex justify-center items-center h-64">
           <div className="text-brand-primary-3 dark:text-white">
-            Загрузка...
+            {t("project_info_loading")}
           </div>
         </div>
       </div>
@@ -54,7 +56,7 @@ const ProjectInfo = () => {
       <div className="w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl p-3 lg:p-4 mb-4">
         <div className="flex justify-center items-center h-64">
           <div className="text-brand-primary-3 dark:text-white">
-            Проект не найден
+            {t("project_info_not_found")}
           </div>
         </div>
       </div>
@@ -70,7 +72,7 @@ const ProjectInfo = () => {
       <div className="w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl p-3 lg:p-4 mb-4">
         <div className="flex justify-center items-center h-64">
           <div className="text-brand-primary-3 dark:text-white">
-            Серверы не найдены
+            {t("project_info_servers_not_found")}
           </div>
         </div>
       </div>
@@ -87,7 +89,7 @@ const ProjectInfo = () => {
             </BreadcrumbItem>
             <BreadcrumbItem>
               <BreadcrumbLink className="font-medium text-xs" href="/">
-                Главная
+                {t("project_info_home")}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -96,7 +98,7 @@ const ProjectInfo = () => {
                 className="font-medium text-xs"
                 href="/top-servers"
               >
-                {project.name || "Проекты"}
+                {project.name || t("project_info_projects")}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -131,7 +133,7 @@ const ProjectInfo = () => {
                 )}
                 {server && (
                   <span className="px-2 py-1 rounded-md text-xs leading-4 font-bold bg-brand-btn-gray-3 text-white">
-                    Сервер
+                    {t("project_info_server")}
                   </span>
                 )}
                 {server && (
@@ -149,7 +151,7 @@ const ProjectInfo = () => {
                     {renderStars({ rating: server?.rating_stars || 0 })}
                   </div>
                   <span className="text-xs font-bold text-brand-primary dark:text-[#84889a]">
-                    Голосов:{" "}
+                    {t("project_info_votes")}{" "}
                     <span className="text-brand-btn">
                       {server?.votes_count || project.total_votes}
                     </span>
@@ -164,7 +166,7 @@ const ProjectInfo = () => {
                       <div className="flex items-center gap-2 text-white bg-brand-primary h-full rounded-lg px-4">
                         <FaCheck className="text-sm text-brand-btn" />
                         <span className="text-xs leading-4 font-extrabold">
-                          ГОЛОС УЧТЁН
+                          {t("project_info_vote_counted")}
                         </span>
                       </div>
                     </div>
@@ -181,7 +183,7 @@ const ProjectInfo = () => {
               </div>
 
               <button className="w-full bg-brand-btn cursor-pointer hover:bg-brand-btn/90 text-white rounded-xl px-4 h-[53px] flex items-center justify-center gap-2 text-lg font-extrabold transition-colors relative z-10 before:absolute before:size-full before:bg-brand-btn before:top-0 before:left-px before:blur-md before:opacity-60 before:-z-10">
-                ИГРАТЬ ›
+                {t("project_info_play")}
               </button>
             </div>
           </div>
@@ -195,19 +197,19 @@ const ProjectInfo = () => {
                 className="relative before:absolute before:w-full before:h-0.5 data-[state=active]:before:bg-brand-btn before:-bottom-px text-sm data-[state=active]:text-brand-btn py-5 rounded-none !shadow-none cursor-pointer font-medium dark:text-white"
                 value="general"
               >
-                Общая информация
+                {t("project_info_general")}
               </TabsTrigger>
               <TabsTrigger
                 className="relative before:absolute before:w-full before:h-0.5 data-[state=active]:before:bg-brand-btn before:-bottom-px text-sm data-[state=active]:text-brand-btn py-5 rounded-none !shadow-none cursor-pointer font-medium dark:text-white"
                 value="reviews"
               >
-                Отзывы
+                {t("project_info_reviews")}
               </TabsTrigger>
               <TabsTrigger
                 className="relative before:absolute before:w-full before:h-0.5 data-[state=active]:before:bg-brand-btn before:-bottom-px text-sm data-[state=active]:text-brand-btn py-5 rounded-none !shadow-none cursor-pointer font-medium dark:text-white"
                 value="history"
               >
-                История голосов
+                {t("project_info_vote_history")}
               </TabsTrigger>
             </TabsList>
           </div>

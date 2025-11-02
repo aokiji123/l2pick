@@ -1,6 +1,9 @@
+"use client";
+
 import React from 'react';
 import { isToday, isTomorrow, isYesterday, format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 interface Props {
   date: string;
@@ -8,11 +11,11 @@ interface Props {
   topserver?: boolean;
 }
 
-function getRelativeDateLabel(dateString: string): "Сегодня" | "Завтра" | "Вчера" | null {
+function getRelativeDateLabel(dateString: string, t: (key: string) => string): string | null {
   const date = new Date(dateString);
-  if (isToday(date)) return "Сегодня";
-  if (isTomorrow(date)) return "Завтра";
-  if (isYesterday(date)) return "Вчера";
+  if (isToday(date)) return t("date_today");
+  if (isTomorrow(date)) return t("date_tomorrow");
+  if (isYesterday(date)) return t("date_yesterday");
   return null;
 }
 
@@ -22,13 +25,14 @@ function formatDate(dateString: string): string {
 }
 
 const DateResponse: React.FC<Props> = ({ date, color = false, topserver = false }) => {
-  const relativeLabel = getRelativeDateLabel(date);
+  const { t } = useTranslation();
+  const relativeLabel = getRelativeDateLabel(date, t);
 
   if (relativeLabel) {
     let bgColor = "";
-    if (relativeLabel === "Сегодня") {
+    if (relativeLabel === t("date_today")) {
       bgColor = topserver ? "text-white" : "text-brand-green";
-    } else if (relativeLabel === "Завтра") {
+    } else if (relativeLabel === t("date_tomorrow")) {
       bgColor = topserver ? "text-white" : "text-brand-btn";
     }
 

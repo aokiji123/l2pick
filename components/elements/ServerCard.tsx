@@ -11,6 +11,7 @@ import CustomDialog from "../server-components/CustomDialog";
 import { useRouter } from "next/navigation";
 import { useMakeComplaint } from "@/lib/queries/useComplaints";
 import { useAuthStore } from "@/contexts/AuthStore";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 interface ServerCardProps {
   id: number; // Ranking position for display
@@ -47,6 +48,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
   const router = useRouter();
   const { isAuthenticated } = useAuthStore();
   const complaintMutation = useMakeComplaint();
+  const { t } = useTranslation();
 
   const handleVote = () => {
     if (!isVoted) {
@@ -73,10 +75,10 @@ const ServerCard: React.FC<ServerCardProps> = ({
     id === 1
       ? "bg-[linear-gradient(0deg,#f5a339_0%,#f56539_100%)] relative before:absolute before:size-full before:bg-brand-btn before:top-0 before:left-0 before:blur-md before:opacity-60 before:-z-10"
       : id === 2
-        ? "bg-[linear-gradient(0deg,#f5a339_0%,#f56539_100%)]"
-        : id === 3
-          ? "bg-[#f57239]"
-          : "bg-[#414753]";
+      ? "bg-[linear-gradient(0deg,#f5a339_0%,#f56539_100%)]"
+      : id === 3
+      ? "bg-[#f57239]"
+      : "bg-[#414753]";
 
   return (
     <div className="relative bg-brand-gray-2 dark:bg-brand-primary-4 rounded-2xl border border-[#e6e9ec] dark:border-brand-primary-4 p-3">
@@ -97,7 +99,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
               <Image src={image} alt={title} fill className="object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                No Image
+                {t("server_card_no_image")}
               </div>
             )}
           </div>
@@ -151,7 +153,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
               {renderStars({ rating })}
             </div>
             <span className="text-xs font-bold text-brand-primary dark:text-[#84889a]">
-              Голосов:{" "}
+              {t("server_card_votes")}{" "}
               <span className="text-brand-btn">{votes.toLocaleString()}</span>
             </span>
           </div>
@@ -167,7 +169,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
               <div className="flex items-center justify-end gap-2 text-white bg-brand-primary h-full rounded-lg px-4">
                 <FaCheck className="text-sm text-brand-btn" />
                 <span className="text-xs leading-4 font-extrabold">
-                  ГОЛОС УЧТЁН
+                  {t("project_info_vote_counted")}
                 </span>
               </div>
             </div>
@@ -186,7 +188,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
             href={`/project-info?slug=${slug || ""}`}
             className="flex-1 w-full min-h-10 flex items-center justify-center text-xs font-extrabold hover:opacity-90 py-2 text-brand-btn bg-white dark:bg-[#2b2e3a] border border-[#e6e9ec] dark:border-[#2b2e3a] rounded-lg"
           >
-            ПЕРЕЙТИ НА САЙТ ›
+            {t("project_info_play")}
           </Link>
           <div className="flex-1 flex items-center gap-2 w-full">
             <button
@@ -206,7 +208,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
               onClick={() => router.push(`/project-info?slug=${slug || ""}`)}
               className="flex-1 h-10 cursor-pointer bg-white dark:bg-[#2b2e3a] border border-[#e6e9ec] dark:border-[#2b2e3a] text-xs font-extrabold leading-4 text-brand-primary dark:text-white px-3 rounded-lg"
             >
-              Подробнее
+              {t("server_card_more_info")}
             </button>
           </div>
         </div>
@@ -218,7 +220,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
           <div className="flex items-center pl-4">
             {renderStars({ rating })}
             <span className="text-xs font-bold text-brand-primary dark:text-[#84889a] px-2.5 border-r border-[#e6e9ec]">
-              Голосов:{" "}
+              {t("server_card_votes")}{" "}
               <span className="text-brand-btn">{votes.toLocaleString()}</span>
             </span>
             <div className="flex items-center gap-1.5 pl-3">
@@ -254,7 +256,7 @@ const ServerCard: React.FC<ServerCardProps> = ({
               href={`/project-info?slug=${slug || ""}`}
               className="flex items-center whitespace-nowrap text-xs font-extrabold hover:opacity-90 px-3 text-brand-btn"
             >
-              ПЕРЕЙТИ НА САЙТ ›
+              {t("project_info_play")}
             </Link>
           </div>
         </div>
@@ -267,8 +269,11 @@ const ServerCard: React.FC<ServerCardProps> = ({
         >
           {isFlagged ? <FaCheck className="text-brand-green" /> : <FlagIcon />}
         </button>
-        <button className="h-10 cursor-pointer bg-white dark:bg-[#2b2e3a] border border-[#e6e9ec] dark:border-[#2b2e3a] text-xs font-extrabold leading-4 text-brand-primary dark:text-white px-5 rounded-lg">
-          Подробнее о сервере
+        <button
+          onClick={() => router.push(`/project-info?slug=${slug || ""}`)}
+          className="h-10 cursor-pointer bg-white dark:bg-[#2b2e3a] border border-[#e6e9ec] dark:border-[#2b2e3a] text-xs font-extrabold leading-4 text-brand-primary dark:text-white px-5 rounded-lg"
+        >
+          {t("server_card_more_info_detailed")}
         </button>
       </div>
     </div>

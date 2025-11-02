@@ -14,6 +14,7 @@ import MainButton from "../elements/MainButton";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/contexts/AuthStore";
 import { useCanVoteForServer, useVoteForServer } from "@/lib/queries/useVotes";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 interface props {
   handleClick?: () => void;
@@ -22,6 +23,7 @@ interface props {
 }
 
 const CustomDialog = ({ handleClick, serverId, serverName }: props) => {
+  const { t } = useTranslation();
   const { isAuthenticated } = useAuthStore();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -40,9 +42,7 @@ const CustomDialog = ({ handleClick, serverId, serverName }: props) => {
       setErrorMessage("");
     } catch (error: any) {
       console.error("Vote error:", error);
-      const message =
-        error?.response?.data?.message ||
-        "Произошла ошибка при голосовании. Попробуйте позже.";
+      const message = error?.response?.data?.message || t("dialog_vote_error");
       setErrorMessage(message);
     }
   };
@@ -71,7 +71,7 @@ const CustomDialog = ({ handleClick, serverId, serverName }: props) => {
         className="w-full bg-brand-btn cursor-pointer hover:bg-brand-btn/90 text-white rounded-lg px-4 h-10 flex items-center justify-center gap-2 text-xs font-medium transition-colors relative z-10 before:absolute before:size-full before:bg-brand-btn before:top-0 before:left-px before:blur-md before:opacity-60 before:-z-10 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <FaThumbsUp className="text-sm" />
-        {isCheckingVote ? "ЗАГРУЗКА..." : "ПРОГОЛОСОВАТЬ"}
+        {isCheckingVote ? t("dialog_loading") : t("dialog_vote")}
       </DialogTrigger>
       {!isAuthenticated ? (
         <AuthRequiredDialog />
@@ -95,6 +95,7 @@ const CustomDialog = ({ handleClick, serverId, serverName }: props) => {
 };
 
 export const AuthRequiredDialog = () => {
+  const { t } = useTranslation();
   const route = useRouter();
   return (
     <DialogContent className="bg-transparent border-none p-0">
@@ -135,13 +136,13 @@ export const AuthRequiredDialog = () => {
           </DialogTitle>
           <div className="text-center">
             <DialogDescription className="md:text-lg font-bold text-[#26292f] leading-5">
-              Для голосования за сервер, необходимо{" "}
+              {t("dialog_auth_required_text")}{" "}
               <Link className="text-brand-btn" href={"3"}>
-                авторизоваться
+                {t("dialog_auth_required_login")}
               </Link>
             </DialogDescription>
             <span className="text-sm leading-5">
-              Перейдите на страницу авторизации
+              {t("dialog_auth_required_navigate")}
             </span>
           </div>
           <div className="w-full flex items-center justify-center mt-5 px-4">
@@ -149,7 +150,7 @@ export const AuthRequiredDialog = () => {
               onClick={() => route.push("/auth")}
               className="w-fit text-sm font-extrabold leading-4"
             >
-              АВТОРИЗАЦИЯ
+              {t("dialog_auth_button")}
             </MainButton>
           </div>
         </DialogHeader>
@@ -165,6 +166,7 @@ export const VoteSuccessDialog = ({
   handleClick?: () => void;
   serverName?: string;
 }) => {
+  const { t } = useTranslation();
   return (
     <DialogContent className="bg-transparent border-none p-0">
       <div className="flex items-center justify-center relative bg-white min-h-[299px] border-none rounded-3xl shadow-2xl ">
@@ -204,17 +206,19 @@ export const VoteSuccessDialog = ({
           </DialogTitle>
           <div className="text-center">
             <DialogDescription className="md:text-lg font-bold text-[#26292f] leading-5">
-              Спасибо за то, что проголосовали за сервер{" "}
+              {t("dialog_thank_you")}{" "}
               <span className="text-brand-btn">{serverName || "StackGO"}</span>
             </DialogDescription>
-            <span className="text-sm leading-5">Ваш голос успешно учтён</span>
+            <span className="text-sm leading-5">
+              {t("dialog_vote_success")}
+            </span>
           </div>
           <div className="w-full flex items-center justify-center mt-5 px-4">
             <MainButton
               onClick={handleClick}
               className="w-fit text-sm font-extrabold leading-4"
             >
-              ПРОДОЛЖИТЬ
+              {t("dialog_continue")}
             </MainButton>
           </div>
         </DialogHeader>
@@ -234,6 +238,7 @@ export const VoteDialog = ({
   serverName?: string;
   errorMessage?: string;
 }) => {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   return (
     <DialogContent className="bg-transparent border-none p-0">
@@ -241,7 +246,7 @@ export const VoteDialog = ({
         <div className="absolute left-1/2 -translate-x-1/2 top-2 w-[96%] h-full bg-white dark:bg-brand-primary-4 rounded-2xl -z-50"></div>
         <DialogHeader className="flex flex-col items-center justify-center w-full">
           <DialogTitle className="text-brand-primary-3 dark:text-white text-center">
-            Вы собираетесь проголосовать за сервер{" "}
+            {t("dialog_vote_confirm")}{" "}
             <span className="text-brand-btn">{serverName || "StackGO"}</span>
           </DialogTitle>
           <div className="text-center w-full mt-7 space-y-3">
@@ -252,12 +257,12 @@ export const VoteDialog = ({
               </div>
             )}
             <div className="flex items-center justify-between w-full h-11 px-5 rounded-xl border border-[#d7dfe4] dark:border-[#21252f] bg-brand-gray-3 dark:bg-brand-dark text-sm text-[#26292f] dark:text-white font-medium">
-              <p>Ваш IP адрес</p>
-              <p>{user?.ip || "Не доступен"}</p>
+              <p>{t("dialog_your_ip")}</p>
+              <p>{user?.ip || t("dialog_not_available")}</p>
             </div>
             <div className="flex items-center justify-between w-full h-11 px-5 rounded-xl border border-[#d7dfe4] dark:border-[#21252f] bg-brand-gray-3 dark:bg-brand-dark text-sm text-[#26292f] dark:text-white font-medium">
-              <p>Ваш E-mail</p>
-              <p>{user?.email || "Не доступен"}</p>
+              <p>{t("dialog_your_email")}</p>
+              <p>{user?.email || t("dialog_not_available")}</p>
             </div>
           </div>
           <div className="w-full flex items-center justify-center mt-5">
@@ -268,8 +273,10 @@ export const VoteDialog = ({
             >
               <FaThumbsUp className="mr-2" />
               {isLoading
-                ? "ГОЛОСОВАНИЕ..."
-                : `ПРОГОЛОСОВАТЬ ЗА ${serverName?.toUpperCase() || "СЕРВЕР"}`}
+                ? t("dialog_voting")
+                : `${t("dialog_vote_for")} ${
+                    serverName?.toUpperCase() || t("dialog_server")
+                  }`}
             </MainButton>
           </div>
         </DialogHeader>
@@ -279,6 +286,7 @@ export const VoteDialog = ({
 };
 
 export const CannotVoteDialog = () => {
+  const { t } = useTranslation();
   return (
     <DialogContent className="bg-transparent border-none p-0">
       <div className="flex items-center justify-center relative bg-white dark:bg-brand-primary-4 min-h-[299px] border-none rounded-3xl shadow-2xl px-8">
@@ -318,11 +326,10 @@ export const CannotVoteDialog = () => {
           </DialogTitle>
           <div className="text-center">
             <DialogDescription className="md:text-lg font-bold text-[#26292f] dark:text-white leading-5">
-              Вы уже проголосовали за этот сервер
+              {t("dialog_already_voted")}
             </DialogDescription>
             <span className="text-sm leading-5 text-[#4f5961] dark:text-[#969ca9]">
-              Пожалуйста, подождите до следующего доступного времени для
-              голосования
+              {t("dialog_wait_for_next")}
             </span>
           </div>
         </DialogHeader>

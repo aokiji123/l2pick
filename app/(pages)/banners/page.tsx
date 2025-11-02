@@ -5,8 +5,11 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BannersItem from "@/components/elements/BannersItem";
 import MobileMenu from "@/components/common/MobileMenu";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const Banners = () => {
+  const { t } = useTranslation();
+
   return (
     <>
       <MobileMenu />
@@ -19,31 +22,31 @@ const Banners = () => {
                 className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white"
                 value="klassicheskie"
               >
-                Классические
+                {t("banners_classical")}
               </TabsTrigger>
               <TabsTrigger
                 className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white"
                 value="niz-levo"
               >
-                Низ лево
+                {t("banners_bottom_left")}
               </TabsTrigger>
               <TabsTrigger
                 className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white"
                 value="niz-pravo"
               >
-                Низ право
+                {t("banners_bottom_right")}
               </TabsTrigger>
               <TabsTrigger
                 className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white"
                 value="verkh-levo"
               >
-                Верх лево
+                {t("banners_top_left")}
               </TabsTrigger>
               <TabsTrigger
                 className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white"
                 value="verkh-pravo"
               >
-                Верх право
+                {t("banners_top_right")}
               </TabsTrigger>
             </TabsList>
             <TabsContent value="klassicheskie">

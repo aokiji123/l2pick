@@ -14,6 +14,7 @@ import MainButton from "../elements/MainButton";
 import { IoSearchSharp } from "react-icons/io5";
 import { useServers, useCreateServer } from "@/lib/queries/useServers";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const servers = [
   {
@@ -131,6 +132,7 @@ const servers = [
 ];
 
 const ServerActions = () => {
+  const { t } = useTranslation();
   const [currentView, setCurrentView] = useState("buttons"); // 'buttons', 'create', 'update'
   const [selectedServer, setSelectedServer] = useState(null);
   const [selectedServerIndex, setSelectedServerIndex] = useState<number | null>(
@@ -172,21 +174,21 @@ const ServerActions = () => {
             className="w-full bg-brand-btn cursor-pointer hover:bg-brand-btn/90 text-white rounded-xl px-4 h-12 flex items-center justify-center gap-2 text-sm font-extrabold transition-colors relative z-10 before:absolute before:size-full before:bg-brand-btn before:top-0 before:left-px before:blur-md before:opacity-60 before:-z-10 mt-6"
             type="button"
           >
-            ДОБАВИТЬ НОВЫЙ СЕРВЕР
+            {t("server_actions_add_new")}
           </button>
           <Dialog>
             <DialogTrigger className="w-full bg-brand-primary cursor-pointer hover:bg-brand-primary/90 text-white rounded-xl px-4 h-12 flex items-center justify-center gap-2 text-sm font-extrabold transition-colors">
-              ЗАЯВИТЬ О ПРАВАХ НА СЕРВЕР
+              {t("server_actions_claim_rights")}
             </DialogTrigger>
             <DialogContent className="bg-transparent border-none p-0 mt-20 max-h-[664px] h-full">
               <div className="flex flex-col items-center justify-center relative bg-white min-h-[299px] border-none rounded-3xl shadow-2xl ">
                 <div className="absolute left-1/2 -translate-x-1/2 top-2 w-[96%] h-full bg-white rounded-2xl -z-50"></div>
                 <DialogHeader className="flex flex-col items-center justify-center">
                   <DialogTitle className="text-lg font-bold text-[#26292f] leading-4">
-                    Хотите заявить о правах на сервер?
+                    {t("server_actions_claim_question")}
                   </DialogTitle>
                   <DialogDescription className="text-sm font-medium leading-4">
-                    Найдите в поиске нужный сервер и подтвердите
+                    {t("server_actions_claim_instruction")}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="text-center mt-10 max-w-[507px] w-full">
@@ -194,7 +196,7 @@ const ServerActions = () => {
                     <input
                       type="text"
                       className={`w-full h-11 px-5 rounded-xl border border-[#d7dfe4] dark:border-[#21252f] bg-brand-gray-3 dark:bg-brand-dark text-xs text-brand-primary dark:text-white font-medium placeholder:text-brand-secondary outline-none dark:placeholder:text-[#535967]`}
-                      placeholder="Введите название сервера"
+                      placeholder={t("server_actions_server_name_placeholder")}
                     />
                     <IoSearchSharp className="absolute text-brand-btn stroke-2 size-5 top-1/2 -translate-y-1/2 right-5" />
                   </div>
@@ -226,7 +228,7 @@ const ServerActions = () => {
                     }}
                     className="w-fit text-sm font-extrabold leading-4"
                   >
-                    ЗАЯВИТЬ О ПРАВАХ НА СЕРВЕР
+                    {t("server_actions_claim_rights")}
                   </MainButton>
                 </div>
               </div>

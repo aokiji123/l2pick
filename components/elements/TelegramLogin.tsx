@@ -5,6 +5,7 @@ import { useAuthTelegram } from "@/lib/queries/useAuth";
 import { useAuthStore } from "@/contexts/AuthStore";
 import { useRouter } from "next/navigation";
 import { FaTelegramPlane } from "react-icons/fa";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 interface TelegramUser {
   id: number;
@@ -25,6 +26,7 @@ const TelegramLogin: React.FC<TelegramLoginProps> = ({
   onError,
   className = "bg-[linear-gradient(135deg,#58bbfc,#1e9de6)] flex items-center justify-center size-11 rounded-full hover:opacity-90 transition relative before:absolute cursor-pointer before:size-11 before:rounded-full before:bg-[#1e9de6] before:top-1 before:left-px before:blur-md before:opacity-60 before:-z-10 disabled:opacity-50 disabled:cursor-not-allowed",
 }) => {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [telegramData, setTelegramData] = useState<TelegramUser | null>(null);
   const telegramMutation = useAuthTelegram();
@@ -103,7 +105,7 @@ const TelegramLogin: React.FC<TelegramLoginProps> = ({
     } catch (error: any) {
       console.error("Telegram login error:", error);
       onError?.(
-        error.response?.data?.message || "Ошибка авторизации через Telegram"
+        error.response?.data?.message || t("telegram_login_error")
       );
     } finally {
       setIsLoading(false);

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useMakeComplaint } from "@/lib/queries/useComplaints";
 import { useCanVoteForServer, useVoteForServer } from "@/lib/queries/useVotes";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 interface props {
   topserver?: boolean;
@@ -28,6 +29,7 @@ interface props {
 }
 
 const ServerItemDropdown = ({ topserver = false, server }: props) => {
+  const { t } = useTranslation();
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -39,7 +41,7 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
   const complaintMutation = useMakeComplaint();
 
   const { data: canVote, isLoading: isCheckingVote } = useCanVoteForServer(
-    server.id.toString(),
+    server.id.toString()
   );
   const voteMutation = useVoteForServer(server.id.toString());
 
@@ -52,9 +54,7 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
       setErrorMessage("");
     } catch (error: any) {
       console.error("Vote error:", error);
-      const message =
-        error?.response?.data?.message ||
-        "Произошла ошибка при голосовании. Попробуйте позже.";
+      const message = error?.response?.data?.message || t("dialog_vote_error");
       setErrorMessage(message);
     }
   };
@@ -127,8 +127,8 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
                 topserver
                   ? "text-[#f8b464]"
                   : server.has_vip_icon
-                    ? "text-brand-btn"
-                    : "text-brand-primary-3"
+                  ? "text-brand-btn"
+                  : "text-brand-primary-3"
               }`}
             >
               {server.icons &&
@@ -178,10 +178,10 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
           <div className="flex items-center justify-between">
             <div className="text-xs font-bold">
               <span className="block text-brand-primary-3 dark:text-white">
-                позиция в рейтинге {server.ranking_position}
+                {t("server_item_ranking_position")} {server.ranking_position}
               </span>
               <span className="text-brand-btn">
-                ({server.votes_count} голосов)
+                ({server.votes_count} {t("server_item_votes")})
               </span>
             </div>
             <div className="flex flex-wrap items-center justify-end gap-1">
@@ -200,7 +200,9 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
                     disabled={isCheckingVote}
                     className="bg-brand-btn cursor-pointer hover:bg-brand-btn/90 text-white rounded-lg px-4 h-8 flex items-center justify-center gap-2 text-xs font-medium transition-colors relative z-10 before:absolute before:size-full before:bg-brand-btn before:top-0 before:left-px before:blur-md before:opacity-60 before:-z-10 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isCheckingVote ? "..." : "ПРОГОЛОСОВАТЬ"}
+                    {isCheckingVote
+                      ? t("server_item_loading")
+                      : t("dialog_vote")}
                   </DialogTrigger>
                   {!isAuthenticated ? (
                     <AuthRequiredDialog />
@@ -229,7 +231,7 @@ const ServerItemDropdown = ({ topserver = false, server }: props) => {
                 disabled={server.project?.slug === undefined}
                 className="px-3 h-8 bg-[#464b55] text-white text-xs font-bold rounded-md hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                подробнее
+                {t("server_item_more_details")}
               </button>
               <button
                 onClick={handleComplaint}

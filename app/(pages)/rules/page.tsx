@@ -1,31 +1,38 @@
-import MobileFilterSidebar from '@/components/common/MobileFilterSidebar';
-import SearchSidebar from '@/components/common/SearchSidebar';
+"use client";
 
-const texts = [
-  "Мы вынуждены отталкиваться от того, что высококачественный прототип будущего проекта требует от нас анализа позиций, занимаемых участниками в отношении поставленных задач. Но независимые государства лишь добавляют фракционных разногласий и обнародованы.",
-  "Имеется спорная точка зрения, гласящая примерно следующее: реплицированные с зарубежных источников, современные исследования, которые соответствующими инстанциями. Учитывая ключевые сценарии поведения, разбавленное изрядной долей эмпатии, рациональное мышление обеспечивает актуальность существующих финансовых и административных условий!",
-  "Принимая во внимание показатели успешности, внедрение современных методик выявляет срочную потребность кластеризации усилий. Также как граница обучения кадров позволяет выполнить важные задания разработке инновационных методов управления процессами.",
-  "Так и внешне зависимых концептуальных решений. Как принято считать, некоторые особенности внутренней политики являются только методом политического участия и объявлены нарушающими общечеловеческие нормы этики и морали.",
-  "Картельные сговоры не допускают ситуации, при которой некоторые особенности внутренней политики призваны к ответу. Лишь ключевые особенности структуры проекта и по сей день остаются уделом либералов, которые жаждут быть подвергнуты целой серии независимых исследований! Ясность нашей позиции очевидна: начало повседневной работы по формированию позиции, в своём классическом представлении, допускает внедрение глубокомысленных рассуждений.",
-  "Также как разбавленное изрядной долей эмпатии, рациональное мышление выявляет срочную потребность своевременного выполнения сверхзадачи.",
-  "Следует отметить, что сплочённость команды профессионалов создаёт необходимость включения в производственный план целого ряда неочередных мероприятий с учётом комплекса существующих финансовых и административных условий. В целом, конечно, постоянный количественный рост и сфера нашей активности выявляет срочную потребность направлений прогрессивного развития.",
-  "Высокий уровень вовлечения представителей целевой аудитории является четким доказательством простого факта: современная методология разработки способствует повышению качества стандартных подходов. Есть над чем задуматься: некоторые особенности внутренней политики освещают чрезвычайно интересные особенности картины в целом, однако конкретные выводы, разумеется, смешаны с не уникальными данными до степени совершенной неузнаваемости, из-за чего возрастает их статус бесполезности!"
-]
+import MobileFilterSidebar from "@/components/common/MobileFilterSidebar";
+import SearchSidebar from "@/components/common/SearchSidebar";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 export default function Rules() {
+  const { t } = useTranslation();
+
+  const texts = [
+    t("rules_paragraph_1"),
+    t("rules_paragraph_2"),
+    t("rules_paragraph_3"),
+    t("rules_paragraph_4"),
+    t("rules_paragraph_5"),
+    t("rules_paragraph_6"),
+    t("rules_paragraph_7"),
+    t("rules_paragraph_8"),
+  ];
   return (
     <>
       <MobileFilterSidebar />
-      <div className='flex items-stretch min-h-screen'>
-        <SearchSidebar /> 
-        <div className='w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl lg:rounded-l-none p-3 lg:p-4'>
-          <div className='lg:px-4 py-4'>
-            <h2 className='text-xl text-brand-primary-3 font-exo2 dark:text-white font-bold uppercase leading-7 mb-7'>
-              правила
+      <div className="flex items-stretch min-h-screen">
+        <SearchSidebar />
+        <div className="w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl lg:rounded-l-none p-3 lg:p-4">
+          <div className="lg:px-4 py-4">
+            <h2 className="text-xl text-brand-primary-3 font-exo2 dark:text-white font-bold uppercase leading-7 mb-7">
+              {t("rules_title")}
             </h2>
-            <div className='flex flex-col gap-3.5 w-full'>
-              {texts.map((item,idx) => (
-                <p key={idx} className='text-sm font-medium text-brand-primary-3 dark:text-white'>
+            <div className="flex flex-col gap-3.5 w-full">
+              {texts.map((item, idx) => (
+                <p
+                  key={idx}
+                  className="text-sm font-medium text-brand-primary-3 dark:text-white"
+                >
                   {item}
                 </p>
               ))}

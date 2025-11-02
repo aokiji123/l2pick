@@ -5,9 +5,11 @@ import SearchSidebar from "@/components/common/SearchSidebar";
 import ServerCard from "@/components/elements/ServerCard";
 import { useTop5Servers } from "@/lib/queries/useServers";
 import React from "react";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const TopServers = () => {
   const { data: topServers, isLoading, error } = useTop5Servers();
+  const { t } = useTranslation();
 
   if (isLoading) {
     return (
@@ -35,7 +37,7 @@ const TopServers = () => {
           <SearchSidebar />
           <div className="w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl lg:rounded-l-none p-3 lg:p-4">
             <div className="text-center text-red-500">
-              Error loading servers
+              {t("top_servers_error")}
             </div>
           </div>
         </div>

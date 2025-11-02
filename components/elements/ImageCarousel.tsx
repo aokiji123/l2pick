@@ -1,20 +1,23 @@
-"use client"
-import Image from "next/image"
+"use client";
+import Image from "next/image";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
-} from "@/components/ui/carousel"
+} from "@/components/ui/carousel";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const images = [
   "/slide-1.jpg",
   "https://picsum.photos/id/250/200/300",
-  "https://picsum.photos/id/236/200/300"
-]
+  "https://picsum.photos/id/236/200/300",
+];
 
 export default function ImageCarousel() {
+  const { t } = useTranslation();
+
   return (
     <div className="relative w-full max-w-4xl mx-auto overflow-hidden rounded-2xl">
       <Carousel className="w-full">
@@ -24,7 +27,7 @@ export default function ImageCarousel() {
               <div className="relative h-[266px]">
                 <Image
                   src={src}
-                  alt={`Slide ${index + 1}`}
+                  alt={`${t("image_carousel_slide")} ${index + 1}`}
                   fill
                   className="object-cover"
                 />
@@ -43,5 +46,5 @@ export default function ImageCarousel() {
         />
       </Carousel>
     </div>
-  )
+  );
 }

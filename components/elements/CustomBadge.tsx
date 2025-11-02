@@ -1,12 +1,17 @@
+"use client";
+
 import React from "react";
 import { BsFillLightningFill } from "react-icons/bs";
 import { MdOutlineAccessTime } from "react-icons/md";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 interface props {
   launchDate?: string | null;
 }
 
 const CustomBadge = ({ launchDate }: props) => {
+  const { t } = useTranslation();
+
   if (!launchDate) {
     return null;
   }
@@ -26,7 +31,9 @@ const CustomBadge = ({ launchDate }: props) => {
         <MdOutlineAccessTime className="text-sm" />
       )}
       <span className="text-sm font-bold leading-4">
-        {isLaunched ? "Запущен" : `Запуск ${launchDate}`}
+        {isLaunched
+          ? t("custom_badge_launched")
+          : `${t("custom_badge_launch")} ${launchDate}`}
       </span>
     </p>
   );

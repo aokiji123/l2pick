@@ -12,6 +12,7 @@ import { useRates } from "@/lib/queries/useRates";
 import { useChronicles } from "@/lib/queries/useChronicles";
 import { useServers, useTop5Servers } from "@/lib/queries/useServers";
 import { useFilter } from "@/contexts/FilterContext";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const SearchSidebar = () => {
   return (
@@ -23,6 +24,7 @@ const SearchSidebar = () => {
 
 export const FilterContent = () => {
   const { filters, pendingFilters, applyFilters, clearFilters } = useFilter();
+  const { t } = useTranslation();
   const {
     data: advertisementsBackground,
     isLoading: advertisementsBackgroundLoading,
@@ -45,20 +47,20 @@ export const FilterContent = () => {
             href="/top-servers"
             className="col-span-2 cursor-pointer flex items-center justify-center bg-brand-btn-gray-3 text-white text-sm h-10 border border-brand-btn-gray-3 rounded-xl transition-all duration-200 hover:border-[#ee8b21]"
           >
-            Топ сервера Lineage II
+            {t("search_top_servers")}
           </Link>
           <FilterButtons servers={servers?.data || []} colSpan="col-span-1" />
         </div>
 
         <div className="grid grid-cols-2 gap-x-3.5 gap-y-[18px] py-5">
           <CustomSelect
-            title="Все рейты"
+            title={t("search_all_rates")}
             options={rates?.data.map((rate) => rate.name) || []}
             filterType="rate"
             filterData={rates?.data || []}
           />
           <CustomSelect
-            title="Все хроники"
+            title={t("search_all_chronicles")}
             options={chronicles?.data.map((chronicle) => chronicle.name) || []}
             filterType="chronicle"
             filterData={chronicles?.data || []}
@@ -72,7 +74,7 @@ export const FilterContent = () => {
               onClick={clearFilters}
               className="col-span-2 h-10 bg-brand-gray-2 dark:bg-brand-btn-gray-3 text-white text-sm border border-brand-gray-2 dark:border-brand-btn-gray-3 rounded-xl transition-all duration-200 hover:border-brand-orange hover:bg-brand-orange"
             >
-              Сбросить фильтры
+              {t("search_clear_filters")}
             </button>
           )}
 
@@ -80,7 +82,7 @@ export const FilterContent = () => {
             className="col-span-2 tracking-[1px] !h-12 !px-0"
             onClick={applyFilters}
           >
-            ПОДОБРАТЬ СЕРВЕР
+            {t("search_find_server")}
           </MainButton>
         </div>
       </div>
@@ -90,7 +92,7 @@ export const FilterContent = () => {
           <div className="flex items-center justify-center gap-2 mb-4">
             <TopIcon />
             <h2 className="text-white font-bold uppercase tracking-[1px]">
-              ТОП 5 СЕРВЕРОВ
+              {t("mobile_top_5_servers")}
             </h2>
           </div>
 
@@ -155,7 +157,7 @@ export const FilterContent = () => {
             >
               <img
                 src={advertisementsBackground?.data[0].image}
-                alt="Баннер"
+                alt={t("search_banner")}
                 className="w-full h-full object-cover"
               />
             </Link>

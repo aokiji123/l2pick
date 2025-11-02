@@ -5,8 +5,10 @@ import { IoSearch } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { useServers } from "@/lib/queries/useServers";
 import { Server } from "@/lib/types/server";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const SearchInput = () => {
+  const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
   const [filteredServers, setFilteredServers] = useState<Server[]>([]);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
@@ -96,7 +98,7 @@ const SearchInput = () => {
             ref={inputRef}
             className="absolute w-full h-full outline-none text-white placeholder:text-[#848a99] text-base tracking-[1px] pl-4 pr-12"
             type="text"
-            placeholder="Поиск по серверам"
+            placeholder={t("search_input_placeholder")}
             value={searchValue}
             onChange={(e) => handleSearchChange(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -153,7 +155,7 @@ const SearchInput = () => {
             ))
           ) : (
             <div className="p-4 text-center">
-              <p className="text-[#848a99] text-sm">Серверы не найдены</p>
+              <p className="text-[#848a99] text-sm">{t("search_input_no_results")}</p>
             </div>
           )}
         </div>

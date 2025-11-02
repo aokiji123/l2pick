@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import React, { useMemo } from "react";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 interface TableData {
   id: number;
@@ -15,20 +18,23 @@ interface CustomTableProps {
 // Reusable components for better maintainability
 const TableHeader: React.FC<{ isDesktop?: boolean }> = ({
   isDesktop = false,
-}) => (
-  <div
-    className={`flex items-center bg-transparent text-[#7a838d] text-nowrap font-medium ${
-      isDesktop ? "px-3.5 py-3" : "px-3 py-2"
-    }`}
-  >
-    <div className="w-8 text-sm">№</div>
-    <div className={`flex-1 ${isDesktop ? "text-sm" : "text-xs"}`}>
-      {isDesktop ? "Название сервера" : "Сервер"}
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div
+      className={`flex items-center bg-transparent text-[#7a838d] text-nowrap font-medium ${
+        isDesktop ? "px-3.5 py-3" : "px-3 py-2"
+      }`}
+    >
+      <div className="w-8 text-sm">{t("custom_table_number")}</div>
+      <div className={`flex-1 ${isDesktop ? "text-sm" : "text-xs"}`}>
+        {isDesktop ? t("custom_table_server_name") : t("custom_table_server")}
+      </div>
+      <div className="w-28 text-sm">{t("custom_table_ip")}</div>
+      <div className="w-24 text-sm">{t("custom_table_date")}</div>
     </div>
-    <div className="w-28 text-sm">IP</div>
-    <div className="w-24 text-sm">Дата</div>
-  </div>
-);
+  );
+};
 
 const TableRow: React.FC<{
   item: TableData;
@@ -59,6 +65,7 @@ const MobileCard: React.FC<{
   item: TableData;
   index: number;
 }> = ({ item, index }) => {
+  const { t } = useTranslation();
   const cardClasses = useMemo(() => {
     const baseClasses =
       "border border-[#e0e4eb] dark:border-[#292c37] rounded-lg p-3 mb-2 transition-colors hover:bg-blue-50 dark:hover:bg-blue-900/20";
@@ -70,10 +77,14 @@ const MobileCard: React.FC<{
     <div className={cardClasses}>
       <div className="grid grid-cols-1 gap-2 text-sm">
         {[
-          { label: "№:", value: item.id },
-          { label: "Сервер:", value: item.serverName, truncate: true },
-          { label: "IP:", value: item.ip, truncate: true },
-          { label: "Дата:", value: item.date },
+          { label: t("custom_table_number_label"), value: item.id },
+          {
+            label: t("custom_table_server_label"),
+            value: item.serverName,
+            truncate: true,
+          },
+          { label: t("custom_table_ip_label"), value: item.ip, truncate: true },
+          { label: t("custom_table_date_label"), value: item.date },
         ].map((field, fieldIndex) => (
           <div key={fieldIndex} className="flex items-center justify-between">
             <span className="text-[#7a838d] text-sm font-medium flex-shrink-0">

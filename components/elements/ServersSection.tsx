@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGroupedServers } from "@/lib/queries/useServers";
 import { ServerResponse } from "@/lib/types/server";
 import { useFilter } from "@/contexts/FilterContext";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 function Section({
   title,
@@ -20,6 +21,7 @@ function Section({
   vip?: boolean;
   servers?: ServerResponse;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between gap-3 mb-3">
@@ -33,7 +35,7 @@ function Section({
         </h3>
         {vip && (
           <span className="bg-brand-gray-2 dark:bg-[#13151d] font-exo2 text-sm text-nowrap flex items-center justify-center h-8 text-brand-btn font-extrabold px-3 rounded-md ">
-            VIP сервера
+            {t("servers_section_vip")}
           </span>
         )}
       </div>
@@ -51,6 +53,7 @@ function Section({
 }
 
 export default function ServersSection() {
+  const { t, currentLanguage } = useTranslation();
   const { filters } = useFilter();
 
   const { data: groupedData } = useGroupedServers({
@@ -61,16 +64,36 @@ export default function ServersSection() {
   });
 
   const convertToServerResponse = (
-    servers: any[] | undefined,
+    servers: any[] | undefined
   ): ServerResponse => ({
     data: servers || [],
   });
+
+  // Helper function to format date and day
+  const formatDateWithDay = (date: Date, locale: string) => {
+    const day = date.toLocaleDateString(locale, { weekday: "long" });
+    const capitalizedDay = day.charAt(0).toUpperCase() + day.slice(1);
+    const formattedDate = date.toLocaleDateString(locale, {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+    return `(${formattedDate} - ${capitalizedDay})`;
+  };
+
+  const locale = currentLanguage === "RU" ? "ru-RU" : "en-US";
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const todaySubtitle = formatDateWithDay(today, locale);
+  const tomorrowSubtitle = formatDateWithDay(tomorrow, locale);
 
   const soonServers = convertToServerResponse(groupedData?.data?.coming_soon);
   const openedServersData = convertToServerResponse(groupedData?.data?.opened);
   const todayServersData = convertToServerResponse(groupedData?.data?.today);
   const tomorrowServersData = convertToServerResponse(
-    groupedData?.data?.tomorrow,
+    groupedData?.data?.tomorrow
   );
 
   return (
@@ -82,25 +105,25 @@ export default function ServersSection() {
               className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white text-xs"
               value="soon"
             >
-              Скоро
+              {t("servers_section_soon")}
             </TabsTrigger>
             <TabsTrigger
               className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white text-xs"
               value="opened"
             >
-              Открытые
+              {t("servers_section_opened")}
             </TabsTrigger>
             <TabsTrigger
               className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white text-xs"
               value="today"
             >
-              Сегодня
+              {t("servers_section_today")}
             </TabsTrigger>
             <TabsTrigger
               className="data-[state=active]:bg-brand-gray-2 dark:data-[state=active]:bg-brand-btn-gray-3 data-[state=active]:text-brand-btn h-9 rounded-lg !shadow-none cursor-pointer font-bold dark:text-white text-xs"
               value="tomorrow"
             >
-              Завтра
+              {t("servers_section_tomorrow")}
             </TabsTrigger>
           </TabsList>
           <TabsContent value="soon">
@@ -108,7 +131,7 @@ export default function ServersSection() {
               icon={
                 <MdAccessTime className="text-brand-primary-3 dark:text-brand-btn" />
               }
-              title="Скоро откроются"
+              title={t("servers_section_coming_soon")}
               vip={true}
               servers={soonServers}
             />
@@ -118,22 +141,22 @@ export default function ServersSection() {
               icon={
                 <IoRocketSharp className="text-brand-primary-3 dark:text-brand-btn" />
               }
-              title="Уже открылись"
+              title={t("servers_section_already_opened")}
               vip={true}
               servers={openedServersData}
             />
           </TabsContent>
           <TabsContent value="today">
             <Section
-              title="Сегодня"
-              subtitle="(26.07.2021 - Пятница)"
+              title={t("servers_section_today")}
+              subtitle={todaySubtitle}
               servers={todayServersData}
             />
           </TabsContent>
           <TabsContent value="tomorrow">
             <Section
-              title="Завтра"
-              subtitle="(26.07.2021 - Пятница)"
+              title={t("servers_section_tomorrow")}
+              subtitle={tomorrowSubtitle}
               servers={tomorrowServersData}
             />
           </TabsContent>
@@ -144,7 +167,7 @@ export default function ServersSection() {
           icon={
             <MdAccessTime className="text-brand-primary-3 dark:text-brand-btn" />
           }
-          title="Скоро откроются"
+          title={t("servers_section_coming_soon")}
           vip={true}
           servers={soonServers}
         />
@@ -152,18 +175,18 @@ export default function ServersSection() {
           icon={
             <IoRocketSharp className="text-brand-primary-3 dark:text-brand-btn" />
           }
-          title="Уже открылись"
+          title={t("servers_section_already_opened")}
           vip={true}
           servers={openedServersData}
         />
         <Section
-          title="Сегодня"
-          subtitle="(26.07.2021 - Пятница)"
+          title={t("servers_section_today")}
+          subtitle={todaySubtitle}
           servers={todayServersData}
         />
         <Section
-          title="Завтра"
-          subtitle="(26.07.2021 - Пятница)"
+          title={t("servers_section_tomorrow")}
+          subtitle={tomorrowSubtitle}
           servers={tomorrowServersData}
         />
       </div>

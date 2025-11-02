@@ -7,10 +7,12 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { useServers } from "@/lib/queries/useServers";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const Servers = () => {
   const { data: myServersData, isLoading } = useServers({ my_servers: 1 });
   const myServers = myServersData?.data || [];
+  const { t } = useTranslation();
 
   return (
     <>
@@ -21,7 +23,7 @@ const Servers = () => {
           <div className="grid grid-cols-2 xl:grid-cols-5 items-start xl:h-full">
             <div className="order-2 col-span-2 xl:col-span-3 border-t xl:border-t-0 xl:border-r border-brand-slate-gray/30 h-full py-7">
               <h2 className="font-bold text-brand-primary dark:text-white mb-1 px-4 lg:px-7">
-                Добавление сервера
+                {t("my_servers_add_server")}
               </h2>
 
               <ServerActions />
@@ -30,7 +32,7 @@ const Servers = () => {
               <div className="space-y-4 overflow-y-auto max-h-[690px] pr-2 scroll-style">
                 {isLoading ? (
                   <div className="bg-brand-gray-3 dark:bg-[#20242c] rounded-2xl p-5 text-center py-8 text-brand-header-light dark:text-white">
-                    Загрузка...
+                    {t("my_servers_loading")}
                   </div>
                 ) : myServers.length > 0 ? (
                   myServers.map((server) => (
@@ -61,7 +63,7 @@ const Servers = () => {
                       <div className="divide-y divide-[#d9e2e9] dark:divide-[#2a2d38]">
                         <div className="flex items-center justify-between py-2">
                           <span className="text-brand-header-light dark:text-brand-slate-gray text-sm font-medium">
-                            Позиция в рейтинге
+                            {t("my_servers_ranking_position")}
                           </span>
                           <span
                             className={`text-brand-primary dark:text-white font-bold truncate`}
@@ -71,7 +73,7 @@ const Servers = () => {
                         </div>
                         <div className="flex items-center justify-between py-2">
                           <span className="text-brand-header-light dark:text-brand-slate-gray text-sm font-medium">
-                            Сервер ID
+                            {t("my_servers_server_id")}
                           </span>
                           <span
                             className={`text-brand-primary dark:text-white font-bold truncate`}
@@ -81,7 +83,7 @@ const Servers = () => {
                         </div>
                         <div className="flex items-center justify-between py-2">
                           <span className="text-brand-header-light dark:text-brand-slate-gray text-sm font-medium">
-                            Голоса
+                            {t("my_servers_votes")}
                           </span>
                           <span
                             className={`text-brand-primary dark:text-white font-bold truncate`}
@@ -91,7 +93,7 @@ const Servers = () => {
                         </div>
                         <div className="flex items-center justify-between py-2">
                           <span className="text-brand-header-light dark:text-brand-slate-gray text-sm font-medium">
-                            Сайт
+                            {t("my_servers_website")}
                           </span>
                           <Link
                             href={server.website_url || "#"}
@@ -105,7 +107,7 @@ const Servers = () => {
                         </div>
                         <div className="flex items-center justify-between py-2">
                           <span className="text-brand-header-light dark:text-brand-slate-gray text-sm font-medium">
-                            Открытие
+                            {t("my_servers_launch")}
                           </span>
                           <DateResponse date={server.launch_date} />
                         </div>
@@ -121,16 +123,16 @@ const Servers = () => {
                         }`}
                       >
                         {server.moderation_status === "approved"
-                          ? "Промодерирован и активен"
+                          ? t("my_servers_moderated_active")
                           : server.moderation_status === "pending"
-                          ? "На модерации"
-                          : "Отклонён"}
+                          ? t("my_servers_under_moderation")
+                          : t("my_servers_rejected")}
                       </button>
                     </div>
                   ))
                 ) : (
                   <div className="bg-brand-gray-3 dark:bg-[#20242c] rounded-2xl p-5 text-center py-8 text-brand-header-light dark:text-white">
-                    У вас пока нет серверов. Создайте новый сервер!
+                    {t("my_servers_no_servers")}
                   </div>
                 )}
               </div>

@@ -3,17 +3,19 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Titlemini from "./TitleMini";
 import { ProjectDetail } from "@/lib/types/project";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 type GeneralInfoProps = {
   project: ProjectDetail;
 };
 
 const GeneralInfo = ({ project }: GeneralInfoProps) => {
+  const { t } = useTranslation();
   if (!project?.servers || project.servers.length === 0) {
     return (
       <div className="py-6 px-3 lg:px-7">
         <div className="text-center text-brand-primary-3 dark:text-white">
-          Серверы не найдены
+          {t("general_info_no_servers")}
         </div>
       </div>
     );
@@ -45,11 +47,11 @@ const GeneralInfo = ({ project }: GeneralInfoProps) => {
             <TabsContent key={server.id} value={value}>
               <div className="flex flex-col lg:flex-row items-start gap-8 py-6">
                 <div className="md:max-w-[404px] w-full">
-                  <Titlemini title="Основная информация" className="mb-5" />
+                  <Titlemini title={t("general_info_main_info")} className="mb-5" />
                   <div className="w-full space-y-2 pt-1">
                     <div className="flex items-center justify-between h-10 rounded-lg bg-brand-gray-2 dark:bg-[#20232d] px-3">
                       <p className="text-sm text-[#5b646b] dark:text-[#797e8c] font-medium">
-                        Открытие
+                        {t("general_info_opening")}
                       </p>
                       <p className="text-sm font-bold text-brand-primary dark:text-white">
                         {server.display_date}
@@ -57,7 +59,7 @@ const GeneralInfo = ({ project }: GeneralInfoProps) => {
                     </div>
                     <div className="flex items-center justify-between h-10 rounded-lg bg-brand-gray-2 dark:bg-[#20232d] px-3">
                       <p className="text-sm text-[#5b646b] dark:text-[#797e8c] font-medium">
-                        Хроники
+                        {t("general_info_chronicles")}
                       </p>
                       <p className="text-sm font-bold text-brand-primary dark:text-white">
                         {server.chronicle.name}
@@ -65,7 +67,7 @@ const GeneralInfo = ({ project }: GeneralInfoProps) => {
                     </div>
                     <div className="flex items-center justify-between h-10 rounded-lg bg-brand-gray-2 dark:bg-[#20232d] px-3">
                       <p className="text-sm text-[#5b646b] dark:text-[#797e8c] font-medium">
-                        Рейты
+                        {t("general_info_rates")}
                       </p>
                       <p className="text-sm font-bold text-brand-primary dark:text-white">
                         x{server.rate}
@@ -73,23 +75,23 @@ const GeneralInfo = ({ project }: GeneralInfoProps) => {
                     </div>
                     <div className="flex items-center justify-between h-10 rounded-lg bg-brand-gray-2 dark:bg-[#20232d] px-3">
                       <p className="text-sm text-[#5b646b] dark:text-[#797e8c] font-medium">
-                        Статус
+                        {t("general_info_status")}
                       </p>
                       <p className="text-sm font-bold text-brand-primary dark:text-white">
-                        {server.status === "opened" ? "Открыт" : "Скоро"}
+                        {server.status === "opened" ? t("general_info_opened") : t("general_info_coming_soon")}
                       </p>
                     </div>
                   </div>
                 </div>
                 <div className="flex-1 w-full">
-                  <Titlemini title="Описание" className="mb-5" />
+                  <Titlemini title={t("general_info_description")} className="mb-5" />
                   <div
                     className="text-sm font-medium text-brand-primary-3 dark:text-white"
                     dangerouslySetInnerHTML={{
                       __html:
                         server.full_description ||
                         server.short_description ||
-                        "Описание отсутствует",
+                        t("general_info_no_description"),
                     }}
                   />
                 </div>

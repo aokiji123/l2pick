@@ -9,6 +9,7 @@ import { useChangeUserPassword } from "@/lib/queries/useUser";
 import { ChangeUserPassword } from "@/lib/types/user";
 import React, { useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 // Utility function to format date from ISO string to DD.MM.YYYY
 const formatDate = (isoString: string): string => {
@@ -23,6 +24,7 @@ const Profile = () => {
   const { data: user, isLoading, error } = useGetUser();
   const { data: votes } = useGetUserVotes();
   const changePasswordMutation = useChangeUserPassword();
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState<ChangeUserPassword>({
     old_password: "",
@@ -36,23 +38,23 @@ const Profile = () => {
     const newErrors: Partial<ChangeUserPassword> = {};
 
     if (!formData.old_password.trim()) {
-      newErrors.old_password = "Введите старый пароль";
+      newErrors.old_password = t("profile_old_password_error");
     }
 
     if (!formData.new_password.trim()) {
-      newErrors.new_password = "Введите новый пароль";
+      newErrors.new_password = t("profile_new_password_error");
     } else if (formData.new_password.length < 6) {
-      newErrors.new_password = "Пароль должен содержать минимум 6 символов";
+      newErrors.new_password = t("profile_new_password_min_error");
     }
 
     if (!formData.new_password_confirmation.trim()) {
-      newErrors.new_password_confirmation = "Повторите новый пароль";
+      newErrors.new_password_confirmation = t("profile_confirm_password_error");
     } else if (formData.new_password !== formData.new_password_confirmation) {
-      newErrors.new_password_confirmation = "Пароли не совпадают";
+      newErrors.new_password_confirmation = t("passwords_not_match");
     }
 
     if (formData.old_password === formData.new_password) {
-      newErrors.new_password = "Новый пароль должен отличаться от старого";
+      newErrors.new_password = t("profile_new_password_different_error");
     }
 
     setErrors(newErrors);
@@ -85,7 +87,7 @@ const Profile = () => {
 
     try {
       await changePasswordMutation.mutateAsync(formData);
-      toast.success("Пароль успешно изменен!");
+      toast.success(t("profile_password_changed_success"));
 
       // Reset form
       setFormData({
@@ -95,7 +97,7 @@ const Profile = () => {
       });
     } catch (error) {
       console.error("Error changing password:", error);
-      toast.error("Ошибка при изменении пароля");
+      toast.error(t("profile_password_change_error"));
     }
   };
 
@@ -131,10 +133,10 @@ const Profile = () => {
                   <div className="flex items-center justify-center p-8">
                     <div className="text-center">
                       <p className="text-red-500 mb-2">
-                        Ошибка загрузки профиля
+                        {t("profile_error_loading")}
                       </p>
                       <p className="text-sm text-gray-500">
-                        Попробуйте обновить страницу
+                        {t("profile_error_try_refresh")}
                       </p>
                     </div>
                   </div>
@@ -145,12 +147,12 @@ const Profile = () => {
               {/* change password */}
               <div className="w-full py-6 px-3 md:px-6">
                 <h3 className="text-sm font-bold text-brand-primary mb-6">
-                  Смена пароля
+                  {t("profile_change_password")}
                 </h3>
                 <form onSubmit={handleSubmit} className="w-full space-y-5">
                   <div>
                     <label className="block text-xs font-bold text-brand-primary dark:text-white mb-2">
-                      Введите старый пароль
+                      {t("profile_old_password_label")}
                     </label>
                     <input
                       type="password"
@@ -171,7 +173,7 @@ const Profile = () => {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-brand-primary dark:text-white mb-2">
-                      Придумайте новый пароль
+                      {t("profile_new_password_label")}
                     </label>
                     <input
                       type="password"
@@ -192,7 +194,7 @@ const Profile = () => {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-brand-primary dark:text-white mb-2">
-                      Повторите пароль
+                      {t("profile_confirm_password_label")}
                     </label>
                     <input
                       type="password"
@@ -217,15 +219,15 @@ const Profile = () => {
                     className="w-full bg-brand-btn cursor-pointer hover:bg-brand-btn/90 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl px-4 h-12 flex items-center justify-center gap-2 text-sm font-extrabold transition-colors relative z-10 before:absolute before:size-full before:bg-brand-btn before:top-0 before:left-px before:blur-md before:opacity-60 before:-z-10 mt-6"
                   >
                     {changePasswordMutation.isPending
-                      ? "ИЗМЕНЕНИЕ..."
-                      : "ИЗМЕНИТЬ ПАРОЛЬ"}
+                      ? t("profile_changing")
+                      : t("profile_change_password_button")}
                   </button>
                 </form>
               </div>
             </div>
             <div className="flex-1 pt-[26px] px-3 md:px-6 pb-8 border-t xl:border-t-0 xl:border-l border-brand-slate-gray/30">
               <h2 className="font-bold text-brand-primary dark:text-white mb-6">
-                Мои голоса за серверы L2
+                {t("profile_my_votes")}
               </h2>
 
               <div className="max-h-[868px] h-full bg-brand-gray-2 dark:bg-brand-dark border border-[#d7dee5] dark:border-[#21252f] dark:text-[#646d78] rounded-2xl px-5 py-4">

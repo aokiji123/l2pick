@@ -9,14 +9,17 @@ import {
   useCreateReview,
 } from "@/lib/queries/useReviews";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 type TestimonialsProps = {
   project: ProjectDetail;
 };
 
 const TestimonialCard = ({ testimonial }: { testimonial: ProjectReview }) => {
+  const { t, currentLanguage } = useTranslation();
+  const locale = currentLanguage === "RU" ? "ru-RU" : "en-US";
   const formattedDate = new Date(testimonial.created_at).toLocaleDateString(
-    "ru-RU",
+    locale,
   );
 
   return (
@@ -27,7 +30,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: ProjectReview }) => {
         </h4>
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-[#a0a6b5] dark:text-gray-400">
-            Оценка:
+            {t("testimonials_rating")}
           </span>
           <div className="flex">
             {renderStars({
@@ -52,6 +55,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: ProjectReview }) => {
 };
 
 const ReviewForm = ({ projectId }: { projectId: number }) => {
+  const { t } = useTranslation();
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -73,11 +77,11 @@ const ReviewForm = ({ projectId }: { projectId: number }) => {
 
   const handleSubmit = async () => {
     if (rating === 0) {
-      alert("Пожалуйста, поставьте оценку серверу");
+      alert(t("testimonials_rate_server_alert"));
       return;
     }
     if (reviewText.trim().length < 10) {
-      alert("Пожалуйста, напишите отзыв (минимум 10 символов)");
+      alert(t("testimonials_write_review_alert"));
       return;
     }
 
@@ -93,12 +97,10 @@ const ReviewForm = ({ projectId }: { projectId: number }) => {
       setReviewText("");
       // Invalidate and refetch reviews
       await queryClient.invalidateQueries({ queryKey: ["reviews", projectId] });
-      alert(
-        "Спасибо за ваш отзыв! Ваш отзыв будет опубликован после модерации.",
-      );
+      alert(t("testimonials_thank_you"));
     } catch (error) {
       console.error("Error creating review:", error);
-      alert("Произошла ошибка при отправке отзыва. Попробуйте снова.");
+      alert(t("testimonials_error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -111,14 +113,14 @@ const ReviewForm = ({ projectId }: { projectId: number }) => {
         <textarea
           value={reviewText}
           onChange={(e) => setReviewText(e.target.value)}
-          placeholder="Напишите свой отзыв"
+          placeholder={t("testimonials_placeholder")}
           rows={10}
           className={`w-full min-h-13 lg:min-h-96 h-full p-4 rounded-xl border scroll-style border-[#d7dfe4] dark:border-[#21252f] bg-brand-gray-3 dark:bg-brand-dark text-xs text-brand-primary dark:text-white font-medium placeholder:text-brand-secondary outline-none dark:placeholder:text-[#535967]`}
           maxLength={maxCharacters}
         />
         {/* Character Counter */}
         <div className="absolute bottom-4 right-3 text-xs text-[#b0b8c6] dark:text-[#30353f] font-medium">
-          {currentCharacters}/{maxCharacters} Символов
+          {currentCharacters}/{maxCharacters} {t("testimonials_characters")}
         </div>
       </div>
 
@@ -126,7 +128,7 @@ const ReviewForm = ({ projectId }: { projectId: number }) => {
       <div className="flex flex-col sm:flex-row gap-4 justify-between">
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-[#a0a6b5] dark:text-[#646979]">
-            Оцените сервер:
+            {t("testimonials_rate_server")}
           </span>
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
@@ -160,7 +162,7 @@ const ReviewForm = ({ projectId }: { projectId: number }) => {
           disabled={isSubmitting}
           className="bg-brand-btn hover:bg-brand-btn/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 uppercase text-sm"
         >
-          {isSubmitting ? "Отправка..." : "ОТПРАВИТЬ ОТЗЫВ"}
+          {isSubmitting ? t("testimonials_submitting") : t("testimonials_submit_review")}
         </button>
       </div>
     </div>
@@ -168,6 +170,7 @@ const ReviewForm = ({ projectId }: { projectId: number }) => {
 };
 
 const Testimonials = ({ project }: TestimonialsProps) => {
+  const { t } = useTranslation();
   const { data: reviewsData } = useReviewsForProject(project.id);
 
   const testimonials: ProjectReview[] = (reviewsData?.data ||
@@ -185,7 +188,7 @@ const Testimonials = ({ project }: TestimonialsProps) => {
         <h3
           className={`text-brand-primary-3 dark:text-white font-extrabold leading-4 mb-4 pl-3 lg:pl-7`}
         >
-          Всего <span className="text-brand-btn">{reviewsCount}</span> отзывов
+          {t("testimonials_total_reviews")} <span className="text-brand-btn">{reviewsCount}</span> {t("testimonials_reviews_count")}
         </h3>
         <div className="flex flex-col gap-3 scroll-style max-h-[442px] overflow-y-auto pr-3 pl-3 lg:pl-7 pb-4">
           {filteredTestimonials.length > 0 ? (
@@ -194,13 +197,13 @@ const Testimonials = ({ project }: TestimonialsProps) => {
             ))
           ) : (
             <div className="text-center text-brand-primary-3 dark:text-white py-8">
-              Пока нет отзывов
+              {t("testimonials_no_reviews")}
             </div>
           )}
         </div>
       </div>
       <div className="order-1 py-6 px-3 lg:px-7">
-        <Titlemini title="Оставьте свой отзыв" />
+        <Titlemini title={t("testimonials_leave_review")} />
         <ReviewForm projectId={project.id} />
       </div>
     </div>

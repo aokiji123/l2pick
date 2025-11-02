@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import MainButton from "./MainButton";
@@ -5,6 +7,7 @@ import { DownloadIcon } from "@/icons";
 import { User } from "@/lib/types/user";
 import { useUploadUserAvatar } from "@/lib/queries/useUser";
 import { toast } from "sonner";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 type AvatarItemProps = {
   user?: User;
@@ -14,6 +17,7 @@ const AvatarItem = ({ user }: AvatarItemProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const uploadAvatarMutation = useUploadUserAvatar();
+  const { t } = useTranslation();
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -24,14 +28,14 @@ const AvatarItem = ({ user }: AvatarItemProps) => {
     // Validate file type
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Разрешены только файлы JPG, JPEG и PNG");
+      toast.error(t("avatar_file_type_error"));
       return;
     }
 
     // Validate file size (2MB max)
     const maxSize = 2 * 1024 * 1024; // 2MB in bytes
     if (file.size > maxSize) {
-      toast.error("Размер файла не должен превышать 2MB");
+      toast.error(t("avatar_file_size_error"));
       return;
     }
 
@@ -39,7 +43,7 @@ const AvatarItem = ({ user }: AvatarItemProps) => {
 
     try {
       await uploadAvatarMutation.mutateAsync(file);
-      toast.success("Аватар успешно загружен!");
+      toast.success(t("avatar_upload_success"));
 
       // Reset file input
       if (fileInputRef.current) {
@@ -47,7 +51,7 @@ const AvatarItem = ({ user }: AvatarItemProps) => {
       }
     } catch (error) {
       console.error("Error uploading avatar:", error);
-      toast.error("Ошибка при загрузке аватара");
+      toast.error(t("avatar_upload_error"));
     } finally {
       setIsUploading(false);
     }
@@ -70,27 +74,27 @@ const AvatarItem = ({ user }: AvatarItemProps) => {
         </div>
         <div className="flex-1 text-center sm:text-left">
           <h3 className="text-brand-primary dark:text-white font-extrabold sm:mb-2 truncate lg:max-w-[200px]">
-            {user?.name || "Loading..."}
+            {user?.name || t("avatar_loading")}
           </h3>
 
           <p className="text-xs text-[#5e6a76] dark:text-brand-slate-gray">
-            Регистрация:{" "}
+            {t("avatar_registration")}{" "}
             <span className="font-bold text-brand-primary dark:text-white truncate max-w-[200px]">
               {user?.created_at
                 ? new Date(user.created_at).toLocaleDateString("ru-RU")
-                : "Loading..."}
+                : t("avatar_loading")}
             </span>
           </p>
           <p className="text-xs text-[#5e6a76] dark:text-brand-slate-gray truncate lg:max-w-[150px]">
-            IP:{" "}
+            {t("avatar_ip")}{" "}
             <span className="font-bold text-brand-primary dark:text-white">
-              {user?.ip || "Loading..."}
+              {user?.ip || t("avatar_loading")}
             </span>
           </p>
           <p className="text-xs text-[#5e6a76] dark:text-brand-slate-gray truncate lg:max-w-[150px]">
-            Email:{" "}
+            {t("avatar_email")}{" "}
             <span className="font-bold text-brand-primary dark:text-white">
-              {user?.email || "Loading..."}
+              {user?.email || t("avatar_loading")}
             </span>
           </p>
         </div>
@@ -111,8 +115,8 @@ const AvatarItem = ({ user }: AvatarItemProps) => {
         disabled={isUploading || uploadAvatarMutation.isPending}
       >
         {isUploading || uploadAvatarMutation.isPending
-          ? "Загрузка..."
-          : "Загрузить аватар"}
+          ? t("my_servers_loading")
+          : t("avatar_upload")}
       </MainButton>
     </div>
   );

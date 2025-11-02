@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import React from "react";
 import { useAdvertisementsBanner } from "@/lib/queries/useAdvertisements";
 import { AdvertisementBanner } from "@/lib/types/advertisement";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 interface props {
   data?: number; // Optional for backward compatibility
@@ -9,6 +12,7 @@ interface props {
 }
 
 const BannersItem = ({ data, position }: props) => {
+  const { t } = useTranslation();
   const {
     data: advertisementsData,
     isLoading,
@@ -48,7 +52,7 @@ const BannersItem = ({ data, position }: props) => {
     return (
       <div className="flex flex-col gap-4 py-4 px-5">
         <div className="text-center text-red-500 py-8">
-          Error loading banners. Please try again later.
+          {t("banners_error_loading")}
         </div>
       </div>
     );
@@ -58,7 +62,7 @@ const BannersItem = ({ data, position }: props) => {
     return (
       <div className="flex flex-col gap-4 py-4 px-5">
         <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-          No banners available for this position.
+          {t("banners_no_banners")}
         </div>
       </div>
     );

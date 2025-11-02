@@ -16,10 +16,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axiosInstance from "@/lib/api";
 import TelegramLogin from "@/components/elements/TelegramLogin";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 const Auth = () => {
   const router = useRouter();
   const loginStore = useAuthStore((s) => s.login);
+  const { t } = useTranslation();
 
   // Login form state
   const [loginData, setLoginData] = useState<LoginRequest>({
@@ -68,7 +70,7 @@ const Auth = () => {
       loginStore(response.user, response.access_token);
       router.push("/");
     } catch (error: any) {
-      setLoginError(error.response?.data?.message || "Ошибка авторизации");
+      setLoginError(error.response?.data?.message || t('auth_error'));
     } finally {
       setIsLoginLoading(false);
     }
@@ -80,7 +82,7 @@ const Auth = () => {
 
     // Validate passwords match
     if (registerData.password !== registerData.password_confirmation) {
-      setRegisterError("Пароли не совпадают");
+      setRegisterError(t('passwords_not_match'));
       return;
     }
 
@@ -101,7 +103,7 @@ const Auth = () => {
       loginStore(response.user, response.access_token);
       router.push("/");
     } catch (error: any) {
-      setRegisterError(error.response?.data?.message || "Ошибка регистрации");
+      setRegisterError(error.response?.data?.message || t('registration_error'));
     } finally {
       setIsRegisterLoading(false);
     }
@@ -124,7 +126,7 @@ const Auth = () => {
       }
     } catch (error: any) {
       console.error(`${provider} login error:`, error);
-      setLoginError(`Ошибка авторизации через ${provider}`);
+      setLoginError(`${t('auth_error_via_provider')} ${provider}`);
       setSocialLoading(null);
     }
   };
@@ -163,13 +165,13 @@ const Auth = () => {
                   value="auth"
                   className="flex-1 h-16 py-3 text-[#3b404d] dark:text-white font-extrabold rounded-none border-b border-r border-[#f0f4f5] dark:border-brand-btn-gray"
                 >
-                  АВТОРИЗАЦИЯ
+                  {t('auth_tab_title')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="register"
                   className="flex-1 h-16 py-3 text-[#3b404d] dark:text-white font-extrabold rounded-none border-b border-[#f0f4f5] dark:border-brand-btn-gray"
                 >
-                  РЕГИСТРАЦИЯ
+                  {t('register_tab_title')}
                 </TabsTrigger>
               </TabsList>
 
@@ -185,7 +187,7 @@ const Auth = () => {
                         htmlFor="login-email"
                         className="text-sm font-medium text-[#3b404d] dark:text-white"
                       >
-                        Email
+                        {t('email_label')}
                       </Label>
                       <Input
                         id="login-email"
@@ -195,7 +197,7 @@ const Auth = () => {
                           setLoginData({ ...loginData, email: e.target.value })
                         }
                         className="mt-1 w-full"
-                        placeholder="Введите ваш email"
+                        placeholder={t('email_placeholder')}
                         required
                       />
                     </div>
@@ -205,7 +207,7 @@ const Auth = () => {
                         htmlFor="login-password"
                         className="text-sm font-medium text-[#3b404d] dark:text-white"
                       >
-                        Пароль
+                        {t('password_label')}
                       </Label>
                       <Input
                         id="login-password"
@@ -218,7 +220,7 @@ const Auth = () => {
                           })
                         }
                         className="mt-1 w-full"
-                        placeholder="Введите ваш пароль"
+                        placeholder={t('password_placeholder_login')}
                         required
                       />
                     </div>
@@ -240,7 +242,7 @@ const Auth = () => {
                         htmlFor="remember-me"
                         className="text-sm text-[#3b404d] dark:text-white"
                       >
-                        Запомнить меня
+                        {t('remember_me')}
                       </Label>
                     </div>
                   </div>
@@ -256,7 +258,7 @@ const Auth = () => {
                     disabled={isLoginLoading}
                     className="w-full text-sm md:text-xl !px-5 before:absolute before:size-full before:bg-brand-btn before:top-1 before:left-px before:blur-md before:opacity-60 before:-z-10 mx-auto"
                   >
-                    {isLoginLoading ? "ВХОД..." : "ВОЙТИ"}
+                    {isLoginLoading ? t('logging_in') : t('login_button')}
                   </MainButton>
                 </form>
               </TabsContent>
@@ -273,7 +275,7 @@ const Auth = () => {
                         htmlFor="register-name"
                         className="text-sm font-medium text-[#3b404d] dark:text-white"
                       >
-                        Имя
+                        {t('name_label')}
                       </Label>
                       <Input
                         id="register-name"
@@ -286,7 +288,7 @@ const Auth = () => {
                           })
                         }
                         className="mt-1 w-full"
-                        placeholder="Введите ваше имя"
+                        placeholder={t('name_placeholder')}
                         required
                       />
                     </div>
@@ -296,7 +298,7 @@ const Auth = () => {
                         htmlFor="register-email"
                         className="text-sm font-medium text-[#3b404d] dark:text-white"
                       >
-                        Email
+                        {t('email_label')}
                       </Label>
                       <Input
                         id="register-email"
@@ -309,7 +311,7 @@ const Auth = () => {
                           })
                         }
                         className="mt-1 w-full"
-                        placeholder="Введите ваш email"
+                        placeholder={t('email_placeholder')}
                         required
                       />
                     </div>
@@ -319,7 +321,7 @@ const Auth = () => {
                         htmlFor="register-password"
                         className="text-sm font-medium text-[#3b404d] dark:text-white"
                       >
-                        Пароль
+                        {t('password_label')}
                       </Label>
                       <Input
                         id="register-password"
@@ -332,7 +334,7 @@ const Auth = () => {
                           })
                         }
                         className="mt-1 w-full"
-                        placeholder="Введите пароль"
+                        placeholder={t('password_placeholder_register')}
                         required
                       />
                     </div>
@@ -342,7 +344,7 @@ const Auth = () => {
                         htmlFor="register-confirm-password"
                         className="text-sm font-medium text-[#3b404d] dark:text-white"
                       >
-                        Подтвердите пароль
+                        {t('confirm_password_label')}
                       </Label>
                       <Input
                         id="register-confirm-password"
@@ -355,7 +357,7 @@ const Auth = () => {
                           })
                         }
                         className="mt-1 w-full"
-                        placeholder="Подтвердите пароль"
+                        placeholder={t('confirm_password_placeholder')}
                         required
                       />
                     </div>
@@ -373,8 +375,8 @@ const Auth = () => {
                     className="w-full text-sm md:text-xl !px-5 before:absolute before:size-full before:bg-brand-btn before:top-1 before:left-px before:blur-md before:opacity-60 before:-z-10 mx-auto"
                   >
                     {isRegisterLoading
-                      ? "РЕГИСТРАЦИЯ..."
-                      : "ЗАРЕГИСТРИРОВАТЬСЯ"}
+                      ? t('registering')
+                      : t('register_button')}
                   </MainButton>
                 </form>
               </TabsContent>
@@ -405,7 +407,7 @@ const Auth = () => {
             {/* Social Login */}
             <div className="w-full h-24 flex flex-wrap items-center justify-center sm:justify-between sm:gap-2 relative z-10 bg-white dark:bg-brand-main rounded-b-2xl -translate-y-px border border-t-0 border-[#f0f4f5] dark:border-brand-btn-gray px-4 md:px-6 lg:px-8">
               <p className="text-[#3b404d] text-sm font-medium">
-                Авторизоваться через:
+                {t('login_via')}
               </p>
               <div className="flex gap-3">
                 <button

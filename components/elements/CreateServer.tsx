@@ -27,6 +27,7 @@ import { useProjects } from "@/lib/queries/useProjects";
 import { useChronicles } from "@/lib/queries/useChronicles";
 import { useQueryClient } from "@tanstack/react-query";
 import { Project } from "@/lib/types/project";
+import { useTranslation } from "@/contexts/LanguageContext";
 
 function formatDate(date: Date | undefined) {
   if (!date) return "";
@@ -74,6 +75,7 @@ interface props {
 }
 
 const CreateServer = ({ serverData = null, onBack }: props) => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const createServerMutation = useCreateServer();
   const { data: projectsData } = useProjects();
@@ -128,28 +130,28 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
     const newErrors: FormErrors = {};
     // Soddalashtirilgan: faqat bo'sh inputlar uchun xato
     if (!formData.siteUrl.trim()) {
-      newErrors.siteUrl = "Введите символы от А до Я";
+      newErrors.siteUrl = t("create_server_error_input");
     }
     if (!formData.openingDate.trim()) {
-      newErrors.openingDate = "Введите символы от А до Я";
+      newErrors.openingDate = t("create_server_error_input");
     }
     if (!formData.announcementName.trim()) {
-      newErrors.announcementName = "Введите символы от А до Я";
+      newErrors.announcementName = t("create_server_error_input");
     }
     if (!formData.ratingName.trim()) {
-      newErrors.ratingName = "Введите символы от А до Я";
+      newErrors.ratingName = t("create_server_error_input");
     }
     if (!formData.serverType.trim()) {
-      newErrors.serverType = "Введите символы от А до Я";
+      newErrors.serverType = t("create_server_error_input");
     }
     if (!formData.rates.trim()) {
-      newErrors.rates = "Введите символы от А до Я";
+      newErrors.rates = t("create_server_error_input");
     }
     if (!formData.shortDescription.trim()) {
-      newErrors.shortDescription = "Введите символы от А до Я";
+      newErrors.shortDescription = t("create_server_error_input");
     }
     if (!formData.fullDescription.trim()) {
-      newErrors.fullDescription = "Введите символы от А до Я";
+      newErrors.fullDescription = t("create_server_error_input");
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -193,17 +195,17 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
     }
 
     if (!formData.projectId) {
-      alert("Пожалуйста, выберите проект");
+      alert(t("create_server_select_project"));
       return;
     }
 
     if (!formData.chronicleId) {
-      alert("Пожалуйста, выберите хронику");
+      alert(t("create_server_select_chronicle"));
       return;
     }
 
     if (!formData.serverTypeId) {
-      alert("Пожалуйста, выберите тип сервера");
+      alert(t("create_server_select_server_type"));
       return;
     }
 
@@ -234,11 +236,11 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
         queryKey: ["servers", { my_servers: 1 }],
       });
 
-      alert("Сервер успешно создан!");
+      alert(t("create_server_success"));
       if (onBack) onBack();
     } catch (error) {
       console.error("Error creating server:", error);
-      alert("Произошла ошибка при создании сервера. Попробуйте снова.");
+      alert(t("create_server_error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -255,13 +257,13 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
           className="flex items-center gap-1 text-gray-400 text-sm hover:opacity-90 transition-colors mb-4 pl-4 lg:pl-7"
         >
           <TbArrowBackUp />
-          Back
+          {t("create_server_back")}
         </button>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-b border-brand-slate-gray/30 px-4 lg:px-7 pb-7">
           {/* Site URL */}
           <div>
             <label className="block text-xs font-bold text-brand-primary dark:text-white mb-2.5">
-              Ссылка на сайт
+              {t("create_server_site_url")}
             </label>
             <input
               type="text"
@@ -272,7 +274,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
                   ? "border-brand-danger"
                   : "border-[#d7dfe4] dark:border-[#21252f] bg-brand-gray-3 dark:bg-brand-dark"
               } text-xs text-brand-primary dark:text-white font-medium placeholder:text-brand-secondary outline-none dark:placeholder:text-[#535967]`}
-              placeholder="Ссылка на сайт"
+              placeholder={t("create_server_site_url")}
             />
             {errors.siteUrl && (
               <p className="text-brand-danger text-xs text-right font-medium mt-1.5">
@@ -284,7 +286,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
           {/* Opening Date */}
           <div>
             <label className="block text-xs font-bold text-brand-primary dark:text-white mb-2.5">
-              Дата открытия
+              {t("create_server_opening_date")}
             </label>
             <div className="relative">
               {/* onChange={(e) => handleInputChange('openingDate', e.target.value)} */}
@@ -324,7 +326,9 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
                     className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
                   >
                     <CalendarIcon className="size-3.5 dark:text-white" />
-                    <span className="sr-only">Select date</span>
+                    <span className="sr-only">
+                      {t("create_server_select_date")}
+                    </span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
@@ -354,7 +358,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
           {/* Announcement Name */}
           <div>
             <label className="block text-xs font-bold text-brand-primary dark:text-white mb-2.5">
-              Имя в анонсе
+              {t("create_server_announcement_name")}
             </label>
             <input
               type="text"
@@ -367,7 +371,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
                   ? "border-brand-danger"
                   : "border-[#d7dfe4] dark:border-[#21252f] bg-brand-gray-3 dark:bg-brand-dark"
               } text-xs text-brand-primary dark:text-white font-medium placeholder:text-brand-secondary outline-none dark:placeholder:text-[#535967]`}
-              placeholder="Имя в анонсе"
+              placeholder={t("create_server_announcement_name")}
             />
             {errors.announcementName && (
               <p className="text-brand-danger text-xs text-right font-medium mt-1.5">
@@ -379,7 +383,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
           {/* Rating Name */}
           <div>
             <label className="block text-xs font-bold text-brand-primary dark:text-white mb-2.5">
-              Имя в рейтинге / Странице сервера
+              {t("create_server_rating_name")}
             </label>
             <input
               type="text"
@@ -390,7 +394,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
                   ? "border-brand-danger"
                   : "border-[#d7dfe4] dark:border-[#21252f] bg-brand-gray-3 dark:bg-brand-dark"
               } text-xs text-brand-primary dark:text-white font-medium placeholder:text-brand-secondary outline-none dark:placeholder:text-[#535967]`}
-              placeholder="Странице сервера"
+              placeholder={t("create_server_rating_name_placeholder")}
             />
             {errors.ratingName && (
               <p className="text-brand-danger text-xs text-right font-medium mt-1.5">
@@ -402,7 +406,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
           {/* Server Type */}
           <div>
             <label className="block text-xs font-bold text-brand-primary dark:text-white mb-2.5">
-              Тип сервера *
+              {t("create_server_server_type")}
             </label>
             {/* onChange={(e) => handleInputChange('serverType', e.target.value)} */}
             <Select
@@ -426,7 +430,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
               >
                 <SelectValue
                   className="placeholder:!text-brand-secondary dark:placeholder:text-[#535967]"
-                  placeholder="select"
+                  placeholder={t("create_server_select_placeholder")}
                 />
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-brand-primary dark:text-white !text-xs font-bold border-[#d7dfe4] dark:border-[#21252f]">
@@ -447,7 +451,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
           {/* Тип сборки */}
           <div>
             <label className="block text-xs font-bold text-brand-primary dark:text-white mb-2.5">
-              Тип сборки
+              {t("create_server_assembly_type")}
             </label>
             {/* onChange={(e) => handleInputChange('serverType', e.target.value)} */}
             <Select
@@ -464,7 +468,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
               >
                 <SelectValue
                   className="placeholder:!text-brand-secondary dark:placeholder:text-[#535967]"
-                  placeholder="select"
+                  placeholder={t("create_server_select_placeholder")}
                 />
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-brand-primary dark:text-white !text-xs font-bold border-[#d7dfe4] dark:border-[#21252f]">
@@ -485,7 +489,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
           {/* Rates */}
           <div className="col-span-2">
             <label className="block text-xs font-bold text-brand-primary dark:text-white mb-2.5">
-              Рейты
+              {t("create_server_rates")}
             </label>
             <input
               type="text"
@@ -496,7 +500,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
                   ? "border-brand-danger"
                   : "border-[#d7dfe4] dark:border-[#21252f] bg-brand-gray-3 dark:bg-brand-dark"
               } text-xs text-brand-primary dark:text-white font-medium placeholder:text-brand-secondary outline-none dark:placeholder:text-[#535967]`}
-              placeholder="Рейты (например: x5)"
+              placeholder={t("create_server_rates_placeholder")}
             />
             {errors.rates && (
               <p className="text-brand-danger text-xs text-right font-medium mt-1.5">
@@ -508,7 +512,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
           {/* Project */}
           <div>
             <label className="block text-xs font-bold text-brand-primary dark:text-white mb-2.5">
-              Проект *
+              {t("create_server_project")}
             </label>
             <Select
               value={formData.projectId}
@@ -516,7 +520,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
             >
               <SelectTrigger className="w-full h-11 bg-brand-gray-3 dark:bg-brand-dark border border-[#d7dfe4] dark:border-[#21252f]">
                 <SelectValue
-                  placeholder="Выберите проект"
+                  placeholder={t("create_server_select_project_placeholder")}
                   className="text-brand-primary dark:text-white"
                 />
               </SelectTrigger>
@@ -535,7 +539,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
           {/* Chronicle */}
           <div>
             <label className="block text-xs font-bold text-brand-primary dark:text-white mb-2.5">
-              Хроника *
+              {t("create_server_chronicle")}
             </label>
             <Select
               value={formData.chronicleId}
@@ -543,7 +547,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
             >
               <SelectTrigger className="w-full h-11 bg-brand-gray-3 dark:bg-brand-dark border border-[#d7dfe4] dark:border-[#21252f]">
                 <SelectValue
-                  placeholder="Выберите хронику"
+                  placeholder={t("create_server_select_chronicle_placeholder")}
                   className="text-brand-primary dark:text-white"
                 />
               </SelectTrigger>
@@ -567,7 +571,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
           <div>
             <div className="flex sm:items-center justify-between mb-6">
               <label className="block font-bold text-brand-primary dark:text-white">
-                Краткое описание сервера
+                {t("create_server_short_description")}
               </label>
               <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-6">
                 {/* Language Selector */}
@@ -588,7 +592,8 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
                   ))}
                 </div>
                 <span className="text-xs font-medium text-[#494f5e] w-[115px]">
-                  {formData.shortDescription.length}/400 Символов
+                  {formData.shortDescription.length}/400{" "}
+                  {t("create_server_characters")}
                 </span>
               </div>
             </div>
@@ -604,7 +609,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
                   ? "border-brand-danger"
                   : "border-[#d7dfe4] dark:border-[#21252f] bg-brand-gray-3 dark:bg-brand-dark"
               } text-xs text-brand-primary dark:text-white font-medium placeholder:text-brand-secondary outline-none dark:placeholder:text-[#535967]`}
-              placeholder="Введите краткое описание сервера"
+              placeholder={t("create_server_short_description_placeholder")}
             />
             {errors.shortDescription && (
               <p className="text-brand-danger text-xs text-right font-medium mt-1.5">
@@ -617,7 +622,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
           <div>
             <div className="flex sm:items-center justify-between mb-6">
               <label className="block font-bold text-brand-primary dark:text-white">
-                Полное описание сервера
+                {t("create_server_full_description")}
               </label>
               <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-6">
                 {/* Language Selector */}
@@ -638,7 +643,8 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
                   ))}
                 </div>
                 <span className="text-xs font-medium text-[#494f5e] w-[115px]">
-                  {formData.fullDescription.length}/400 Символов
+                  {formData.fullDescription.length}/400{" "}
+                  {t("create_server_characters")}
                 </span>
               </div>
             </div>
@@ -654,7 +660,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
                   ? "border-brand-danger"
                   : "border-[#d7dfe4] dark:border-[#21252f] bg-brand-gray-3 dark:bg-brand-dark"
               } text-xs text-brand-primary dark:text-white font-medium placeholder:text-brand-secondary outline-none dark:placeholder:text-[#535967]`}
-              placeholder="Введите полное описание сервера"
+              placeholder={t("create_server_full_description_placeholder")}
             />
             {errors.fullDescription && (
               <p className="text-brand-danger text-xs text-right font-medium mt-1.5">
@@ -667,15 +673,19 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
         {/* Logo Upload */}
         <div className="flex justify-between items-center px-4 lg:px-7 py-7 border-b border-brand-slate-gray/30">
           <div className="text-brand-primary dark:text-white">
-            <label className="block font-bold mb-4">Логотип</label>
+            <label className="block font-bold mb-4">
+              {t("create_server_logo")}
+            </label>
             <p className="text-xs font-medium mb-5">
-              120x90 до 50к6 JPG, PNG, WEBP
+              {t("create_server_logo_specs")}
             </p>
             <div className="flex items-center gap-4">
               <div className="flex gap-2">
                 <label className="flex items-center justify-center bg-brand-btn text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-brand-btn/90 transition-colors">
                   <DownloadIcon />
-                  <span className="ml-2 text-sm font-medium">Загрузить</span>
+                  <span className="ml-2 text-sm font-medium">
+                    {t("create_server_upload")}
+                  </span>
                   <input
                     type="file"
                     accept=".jpg,.jpeg,.png,.webp"
@@ -705,7 +715,9 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
                         d="M6 18L18 6M6 6l12 12"
                       />
                     </svg>
-                    <span className="ml-2 text-sm font-medium">Удалить</span>
+                    <span className="ml-2 text-sm font-medium">
+                      {t("create_server_delete")}
+                    </span>
                   </button>
                 )}
               </div>
@@ -715,7 +727,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
             {logoPreview ? (
               <Image
                 src={logoPreview}
-                alt="Logo preview"
+                alt={t("create_server_logo_preview")}
                 fill
                 className="object-cover"
               />
@@ -727,15 +739,19 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
 
         <div className="flex flex-col gap-7 px-4 lg:px-7 py-7 border-b border-brand-slate-gray/30">
           <div className="text-brand-primary dark:text-white">
-            <label className="block font-bold mb-4">Баннер</label>
+            <label className="block font-bold mb-4">
+              {t("create_server_banner")}
+            </label>
             <p className="text-xs font-medium mb-5">
-              36x36 до 50к6 JPG, PNG, WEBP
+              {t("create_server_banner_specs")}
             </p>
             <div className="flex items-center gap-4">
               <div className="flex gap-2">
                 <label className="flex items-center justify-center bg-brand-btn text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-brand-btn/90 transition-colors">
                   <DownloadIcon />
-                  <span className="ml-2 text-sm font-medium">Загрузить</span>
+                  <span className="ml-2 text-sm font-medium">
+                    {t("create_server_upload")}
+                  </span>
                   <input
                     type="file"
                     accept=".jpg,.jpeg,.png,.webp"
@@ -765,7 +781,9 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
                         d="M6 18L18 6M6 6l12 12"
                       />
                     </svg>
-                    <span className="ml-2 text-sm font-medium">Удалить</span>
+                    <span className="ml-2 text-sm font-medium">
+                      {t("create_server_delete")}
+                    </span>
                   </button>
                 )}
               </div>
@@ -775,7 +793,7 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
             {bannerPreview ? (
               <Image
                 src={bannerPreview}
-                alt="Logo preview"
+                alt={t("create_server_banner_preview")}
                 fill
                 className="object-cover"
               />
@@ -791,7 +809,9 @@ const CreateServer = ({ serverData = null, onBack }: props) => {
             disabled={isSubmitting}
             className="w-full max-w-none before:absolute before:size-full before:bg-brand-btn before:top-1 before:left-px before:blur-md before:opacity-60 before:-z-10 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? "Создание сервера..." : "Создать сервер"}
+            {isSubmitting
+              ? t("create_server_creating")
+              : t("create_server_create")}
           </MainButton>
         </div>
       </form>
