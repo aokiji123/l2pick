@@ -4,6 +4,7 @@ import React from 'react';
 import { isToday, isTomorrow, isYesterday, format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { useTranslation } from '@/contexts/LanguageContext';
+import { translations } from '@/lib/translations';
 
 interface Props {
   date: string;
@@ -11,7 +12,10 @@ interface Props {
   topserver?: boolean;
 }
 
-function getRelativeDateLabel(dateString: string, t: (key: string) => string): string | null {
+function getRelativeDateLabel(
+  dateString: string,
+  t: (key: keyof typeof translations.RU) => string
+): string | null {
   const date = new Date(dateString);
   if (isToday(date)) return t("date_today");
   if (isTomorrow(date)) return t("date_tomorrow");

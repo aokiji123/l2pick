@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/contexts/AuthStore";
 import { useAuthProviderCallback } from "@/lib/queries/useAuth";
@@ -8,7 +8,7 @@ import { Provider } from "@/lib/types/auth";
 import { PiCheckFatFill } from "react-icons/pi";
 import { useTranslation } from "@/contexts/LanguageContext";
 
-const AuthCallback = () => {
+const AuthCallbackContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const loginStore = useAuthStore((s) => s.login);
@@ -97,6 +97,28 @@ const AuthCallback = () => {
         </p>
       </div>
     </div>
+  );
+};
+
+const LoadingFallback = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-brand-light dark:bg-brand-dark">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-brand-btn border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-brand-primary dark:text-white text-lg font-medium">
+          {t('completing_auth')}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const AuthCallback = () => {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AuthCallbackContent />
+    </Suspense>
   );
 };
 

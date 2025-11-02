@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { FaCheck, FaHome, FaThumbsUp } from "react-icons/fa";
 import {
@@ -22,8 +22,9 @@ import { useProjectBySlug } from "@/lib/queries/useProjects";
 import { useGetVotesHistory } from "@/lib/queries/useVotes";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { useRegisterLoader } from "@/lib/hooks/useRegisterLoader";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
-const ProjectInfo = () => {
+const ProjectInfoContent = () => {
   const [isVoted, setIsVoted] = useState(false);
   const searchParams = useSearchParams();
   const slug = searchParams.get("slug") || "";
@@ -224,4 +225,24 @@ const ProjectInfo = () => {
     </>
   );
 };
+
+const ProjectInfoLoadingFallback = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="w-full flex-1 bg-white dark:bg-brand-main-dark rounded-2xl p-3 lg:p-4 mb-4">
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner />
+      </div>
+    </div>
+  );
+};
+
+const ProjectInfo = () => {
+  return (
+    <Suspense fallback={<ProjectInfoLoadingFallback />}>
+      <ProjectInfoContent />
+    </Suspense>
+  );
+};
+
 export default ProjectInfo;
